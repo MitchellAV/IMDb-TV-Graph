@@ -1,0 +1,42 @@
+@mixin responsive($screen-size) {
+  // Screen Sizes
+  $screen-size-Tablet: 768px;
+  $screen-size-HD: 1280px;
+  $screen-size-FHD: 1920px;
+  $screen-size-QHD: 2560px;
+  $screen-size-UHD: 3840px;
+
+  @if $screen-size == Tablet {
+    @media only screen and (min-width: $screen-size-Tablet) {
+      @content;
+    }
+  } @else if $screen-size == HD {
+    @media only screen and (min-width: $screen-size-HD) {
+      @content;
+    }
+  } @else if $screen-size == FHD {
+    @media only screen and (min-width: $screen-size-FHD) {
+      @content;
+    }
+  } @else if $screen-size == QHD {
+    @media only screen and (min-width: $screen-size-QHD) {
+      @content;
+    }
+  } @else if $screen-size == UHD {
+    @media only screen and (min-width: $screen-size-UHD) {
+      @content;
+    }
+  }
+}
+
+@mixin orientation($screen-orientation) {
+  @if $screen-orientation == landscape {
+    @media only screen and (orientation: landscape) {
+      @content;
+    }
+  } @else if $screen-orientation == portrait {
+    @media only screen and (min-width: portrait) {
+      @content;
+    }
+  }
+}

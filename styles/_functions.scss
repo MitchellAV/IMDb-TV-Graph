@@ -1,0 +1,18 @@
+@function pow($base, $exponent) {
+  $value: 1;
+
+  @if $exponent > 0 {
+    @for $i from 1 through $exponent {
+      $value: $value * $base;
+    }
+  } @else if $exponent < 0 {
+    @for $i from 1 through -$exponent {
+      $value: $value / $base;
+    }
+  }
+
+  @return $value;
+}
+@function ms($exponent) {
+  @return pow($ms-ratio, $exponent) * 1rem;
+}
