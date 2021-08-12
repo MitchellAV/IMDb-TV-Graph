@@ -1,0 +1,76 @@
+@media (min-width: 1024px) {
+  .container {
+    display: grid;
+    grid-gap: .5em;
+    grid-template:
+      '. showQuery title .'auto '. content graphic .'auto '. content stats .'auto '. content timeModule .'auto / 10% auto 3fr 10%;
+  }
+
+  .showQuery {
+    grid-area: showQuery;
+  }
+
+  .title {
+    grid-area: title;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .graphic {
+    grid-area: graphic;
+    margin: auto;
+    width: 100%;
+  }
+
+  .stats {
+    grid-area: stats;
+    display: flex;
+    justify-content: space-evenly;
+  }
+
+  .timeModule {
+    grid-area: timeModule;
+    display: flex;
+    justify-content: space-evenly;
+  }
+
+  .list {
+    box-shadow: 0 0 .5em rgba(0, 0, 0, 0.1);
+    grid-area: content;
+    padding: 1em;
+    /* display: flex;
+    flex-direction: column; */
+    max-height: 80vh;
+    overflow: auto;
+  }
+}
+
+.bestworst {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+
+.module {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+a {
+  font-size: 30px;
+  text-decoration: none;
+}
+
+.season {
+  padding: 0;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.075);
+  /* text-shadow: 0 0 .5em rgba(0, 0, 0, 0.05); */
+  box-shadow: 0 0 .5em rgba(0, 0, 0, 0.075);
+}
+
+.hide {
+  display: none;
+}
