@@ -86,13 +86,13 @@ const D3ScatterPlot = ({ data, trendlines }: D3ScatterPlotType) => {
     let xAxis = (g: any) =>
       g
         .attr("transform", `translate(0,${height - margin.bottom})`)
-        .call(d3.axisBottom(xScale).ticks(width / 80))
+        .call(d3.axisBottom(xScale).tickFormat(d3.format("d")))
         .call((g: any) => g.select(".domain").remove());
     // Define yAxis using d3.axisLeft(), assigning the scale as `yScale`
     let yAxis = (g: any) =>
       g
         .attr("transform", `translate(${margin.left},0)`)
-        .call(d3.axisLeft(yScale).ticks(width / 80))
+        .call(d3.axisLeft(yScale))
         .call((g: any) => g.select(".domain").remove());
 
     /////////////////////////////
