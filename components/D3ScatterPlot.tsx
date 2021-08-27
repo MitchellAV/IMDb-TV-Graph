@@ -1,57 +1,68 @@
-import { useEffect, useRef, useState } from "react";
+import { RefObject, useEffect, useRef, useState } from "react";
 
 import * as d3 from "d3";
-import { D3EpisodeType } from "../types";
-
-type TrendlineType = {
-  start: {
-    x: number;
-    y: number;
-  };
-  end: {
-    x: number;
-    y: number;
-  };
-} | null;
+import { D3EpisodeType, SeasonStatData } from "../types";
+import head from "next/head";
 
 interface D3ScatterPlotType {
   data: D3EpisodeType[];
-  trendlines: TrendlineType[];
+  trendlines: (SeasonStatData | null)[];
 }
 
 const D3ScatterPlot = ({ data, trendlines }: D3ScatterPlotType) => {
-  const ref = useRef<SVGSVGElement>(null);
+  const useRefDimensions = (ref: RefObject<any>) => {
+    const [dimensions, setDimensions] = useState({ width: 1, height: 2 });
+
+    const updateDimensions = () => {
+      if (ref.current) {
+        const { current } = ref;
+        const boundingRect = current.getBoundingClientRect();
+        const { width, height } = boundingRect;
+        setDimensions({ width: Math.round(width), height: Math.round(height) });
+      }
+    };
+    useEffect(() => {
+      updateDimensions();
+      window.addEventListener("resize", () => updateDimensions());
+
+      return () =>
+        window.removeEventListener("resize", () => updateDimensions());
+    }, []);
+    return dimensions;
+  };
+  const graphRef = useRef<HTMLDivElement>(null);
+  const dimensions = useRefDimensions(graphRef);
 
   useEffect(() => {
     draw();
-  }, []);
+  }, [dimensions]);
 
   const draw = () => {
-    const width = window.innerWidth;
-    const height = 500;
+    d3.select("#tv-show-graph").html("");
+
+    const width = dimensions.width;
+    const height = dimensions.height;
 
     const margin = {
-      top: 20,
-      right: 60,
+      top: 10,
+      right: 0,
       bottom: 50,
-      left: 60,
+      left: 50,
     };
+
+    const padding = 20;
 
     const radius = 5;
     const colors = ["blue", "red", "green", "pink", "purple"];
 
     // Chart width and height - accounting for margins
-    let drawWidth = width - margin.left - margin.right;
+    let drawWidth = width - margin.left;
     let drawHeight = height - margin.top - margin.bottom;
 
     // Variables to display (i.e., which columns to select in the dataset)
-    const xVar = "Episode Number";
-    const yVar = "Episode Rating";
+    const xLabel = "Episode Number";
+    const yLabel = "Episode Rating";
     //////////////////////////////////////////
-    const svg = d3
-      .select(ref.current)
-      .attr("width", width)
-      .attr("height", height);
 
     // Find the maximum x value for the x Scale, and multiply it by 1.05 (to add space)
     let xMax = data.length;
@@ -62,16 +73,19 @@ const D3ScatterPlot = ({ data, trendlines }: D3ScatterPlotType) => {
     // Use `d3.scaleLinear` to define an `xScale` with the appropriate domain and range
     let xScale = d3
       .scaleLinear()
-      .range([margin.left + 50, width - margin.right])
+      .range([margin.left + padding, width - padding])
       .domain([xMin, xMax]);
 
     // Find the maximum y value for the x Scale, and multiply it by 1.05 (to add space)
-    let yMax = Math.max(...data.map((ep) => ep.vote_average));
+    let yMax = Math.min(
+      Math.max(...data.map((ep) => ep.imDbRating)) * 1.05,
+      10
+    );
 
     // Find the minimum y value for the x Scale, and multiply it by .9 (to add space)
     let yMin =
       Math.min(
-        ...data.map((ep) => ep.vote_average).filter((rating) => rating !== 0)
+        ...data.map((ep) => ep.imDbRating).filter((rating) => rating !== 0)
       ) * 0.95;
 
     // Use `d3.scaleLinear` to define a `yScale` with the appropriate domain and range
@@ -81,18 +95,45 @@ const D3ScatterPlot = ({ data, trendlines }: D3ScatterPlotType) => {
       .domain([yMin, yMax]);
 
     //////////////////////////
+    ////////////////////////////////////////////////////////
+
+    // const xAxisGrid = d3
+    //   .axisBottom(xScale)
+    //   .tickFormat(null)
+    //   .tickSize(-drawHeight);
+    const yAxisGrid = d3.axisLeft(yScale).tickFormat(null).tickSize(-drawWidth);
+    // svg
+    //   .append("g")
+    //   .attr("class", "x axis-grid")
+    //   .attr("transform", `translate(0,${height - margin.bottom})`)
+    //   .call(xAxisGrid);
+
+    const svg = d3
+      .select("#tv-show-graph")
+      .append("svg")
+      .attr("class", "D3-graph")
+      .attr("viewBox", `0 0 ${width} ${height}`);
+
+    // svg
+    //   .append("g")
+    //   .attr("class", "y axis-grid")
+    //   .attr("opacity", 0.2)
+    //   .attr("transform", `translate(${margin.left},0)`)
+    //   .call(yAxisGrid)
+    //   .call((g: any) => g.select(".domain").remove())
+    //   .call((g: any) => g.selectAll("text").remove());
 
     // Define xAxis using d3.axisBottom, assigning the scale as `xScale`
     let xAxis = (g: any) =>
       g
         .attr("transform", `translate(0,${height - margin.bottom})`)
-        .call(d3.axisBottom(xScale).tickFormat(d3.format("d")))
+        .call(d3.axisBottom(xScale).tickFormat(d3.format("d")).ticks(10))
         .call((g: any) => g.select(".domain").remove());
     // Define yAxis using d3.axisLeft(), assigning the scale as `yScale`
     let yAxis = (g: any) =>
       g
         .attr("transform", `translate(${margin.left},0)`)
-        .call(d3.axisLeft(yScale))
+        .call(d3.axisLeft(yScale).ticks(10).tickSize(-drawWidth))
         .call((g: any) => g.select(".domain").remove());
 
     /////////////////////////////
@@ -121,24 +162,20 @@ const D3ScatterPlot = ({ data, trendlines }: D3ScatterPlotType) => {
       .append("text")
       .attr(
         "transform",
-        `translate(${margin.left + drawWidth / 2 - 20}, ${
-          height - margin.bottom + 40
-        })`
+        `translate(${drawWidth / 2 - 20}, ${height - margin.bottom + 40})`
       )
       .attr("class", "axis-label")
-      .text(xVar);
+      .text(xLabel);
 
     // Append a text element to the svg to label the y axis
     let yAxisText = svg
       .append("text")
       .attr(
         "transform",
-        `translate( ${margin.left - 40},${
-          margin.top + drawHeight / 2 + 20
-        }) rotate(-90)`
+        `translate( ${margin.left - 30},${drawHeight / 2}) rotate(-90)`
       )
       .attr("class", "axis-label")
-      .text(yVar);
+      .text(yLabel);
 
     let tooltip = d3
       .select("#tv-show-graph")
@@ -158,10 +195,12 @@ const D3ScatterPlot = ({ data, trendlines }: D3ScatterPlotType) => {
     // A function that change this tooltip when the user hover a point.
     // Its opacity is set to 1: we can now see it. Plus it set the text and position of tooltip depending on the datapoint (d)
     let mouseover = function (e: MouseEvent, d: D3EpisodeType) {
-      tooltip.style("opacity", 1);
+      console.log("hover");
+
+      tooltip.style("opacity", 1).style("display", "block");
       tooltip
         .html(
-          `<div class='d3_tooltip'><h3> ${d.season_number} - ${d.episode_number}: ${d.name}</h3><p>Rating: ${d.vote_average}</p><p>Votes: ${d.vote_count}</p><p>Overview:<br>${d.overview}</p></div>`
+          `<div class='d3_tooltip'><h3> ${d.seasonNumber} - ${d.episodeNumber}: ${d.title}</h3><p><b>Rating:</b> ${d.imDbRating}</p><p><b>Votes:</b> ${d.imDbRatingCount}</p><p><b>Aired:<b/> ${d.released}</p><p>Overview: ${d.plot}</p></div>`
         )
         .style("top", e.pageY + 20 + "px")
         .style(
@@ -178,16 +217,16 @@ const D3ScatterPlot = ({ data, trendlines }: D3ScatterPlotType) => {
     // };
 
     // A function that change this tooltip when the leaves a point: just need to set opacity to 0 again
-    let mouseleave = function (e: any, d: D3EpisodeType) {
-      tooltip
-
-        .style("opacity", 0)
-        .style("left", "-10000px")
-        .style("top", "-10000px");
+    let mouseleave = function (e: MouseEvent, d: D3EpisodeType) {
+      tooltip.style("opacity", 0).style("display", "none");
     };
     /* ************************************* Data Join ************************************** */
     // Select all circles and bind data to the selection
-    svg
+
+    // Create the scatter variable: where both the circles and the brush take place
+    const scatter = svg.append("g").attr("clip-path", "url(#clip)");
+
+    scatter
       .append("g")
       .attr("stroke", "#000")
       .attr("stroke-opacity", 0.2)
@@ -195,29 +234,61 @@ const D3ScatterPlot = ({ data, trendlines }: D3ScatterPlotType) => {
       .data(data)
       .join("circle")
       .attr("cx", (d) => xScale(d.true_ep_count))
-      .attr("cy", (d) => yScale(d.vote_average))
-      .attr("fill", (d) => colors[d.season_number % colors.length])
+      .attr("cy", (d) => yScale(d.imDbRating))
+      .attr("fill", (d) => colors[d.seasonNumber % colors.length])
       .attr("r", radius)
       .on("mouseover", mouseover)
       // .on("mousemove", mousemove)
-      .on("mouseleave", mouseleave);
+      .on("mouseleave", mouseleave)
+      .on("click", (e, d) => {
+        window.open(`https://www.imdb.com/title/${d.id}`, "_blank");
+      });
 
-    const draw_trendline = (trendline: TrendlineType, color: string) => {
-      if (trendline) {
-        console.log(trendline);
-
-        const { start, end } = trendline;
+    const draw_trendline = (
+      start: {
+        x: number;
+        y: number;
+      },
+      end: {
+        x: number;
+        y: number;
+      },
+      color: string,
+      std?: number
+    ) => {
+      if (std) {
+        const sigma95 = 1.96 * std;
         svg
           .append("line") // attach a line
           .attr("stroke", color)
+          .style("stroke-dasharray", "3, 3")
           .attr("x1", (d) => xScale(start.x)) // x position of the first end of the line
-          .attr("y1", (d) => yScale(start.y)) // y position of the first end of the line
+          .attr("y1", (d) => yScale(start.y + sigma95)) // y position of the first end of the line
           .attr("x2", (d) => xScale(end.x)) // x position of the second end of the line
-          .attr("y2", (d) => yScale(end.y));
+          .attr("y2", (d) => yScale(end.y + sigma95));
+        svg
+          .append("line") // attach a line
+          .attr("stroke", color)
+          .style("stroke-dasharray", "3, 3")
+          .attr("x1", (d) => xScale(start.x)) // x position of the first end of the line
+          .attr("y1", (d) => yScale(start.y - sigma95)) // y position of the first end of the line
+          .attr("x2", (d) => xScale(end.x)) // x position of the second end of the line
+          .attr("y2", (d) => yScale(end.y - sigma95));
       }
+      svg
+        .append("line") // attach a line
+        .attr("stroke", color)
+        .attr("x1", (d) => xScale(start.x)) // x position of the first end of the line
+        .attr("y1", (d) => yScale(start.y)) // y position of the first end of the line
+        .attr("x2", (d) => xScale(end.x)) // x position of the second end of the line
+        .attr("y2", (d) => yScale(end.y));
     };
     trendlines.forEach((trendline, index) => {
-      draw_trendline(trendline, colors[(index + 1) % colors.length]);
+      if (trendline) {
+        const { start, end, std } = trendline;
+
+        draw_trendline(start, end, colors[(index + 1) % colors.length], std);
+      }
     });
 
     // Use the .exit() and .remove() methods to remove elements that are no longer in the data
@@ -225,13 +296,45 @@ const D3ScatterPlot = ({ data, trendlines }: D3ScatterPlotType) => {
 
     // Add hovers using the d3-tip library
     // chartG.call(tip);
+    // Set the zoom and Pan features: how much you can zoom, on which part, and what to do when there is a zoom
+    // var zoom = d3
+    //   .zoom()
+    //   .scaleExtent([0.5, 20]) // This control how much you can unzoom (x0.5) and zoom (x20)
+    //   .extent([
+    //     [0, 0],
+    //     [drawWidth, drawHeight],
+    //   ])
+    //   .on("zoom", updateChart);
+
+    // // This add an invisible rect on top of the chart area. This rect can recover pointer events: necessary to understand when the user zoom
+    // svg
+    //   // .append("rect")
+    //   // .attr("width", width)
+    //   // .attr("height", height)
+    //   // .style("fill", "none")
+    //   // .style("pointer-events", "all")
+    //   // .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+    //   .call(zoom);
+    // // now the user can zoom and it will trigger the function called updateChart
+
+    // // A function that updates the chart when the user zoom and thus new boundaries are available
+    // function updateChart(e: any) {
+    //   // recover the new scale
+    //   var newX = e.transform.rescaleX(xScale);
+    //   var newY = e.transform.rescaleY(yScale);
+
+    //   // update axes with these new boundaries
+    //   // xAxis((g: any) => g.axisBottom(newX));
+    //   // yAxis((g: any) => g.axisLeft(newY));
+
+    //   // update circle position
+    //   scatter.attr("transform", e.transform);
+    //   // svg.call(xAxis, newX);
+    //   // svg.call(yAxis, newY);
+    // }
   };
 
-  return (
-    <div id="tv-show-graph">
-      <svg className="D3-Scatter-Plot" ref={ref}></svg>
-    </div>
-  );
+  return <div id="tv-show-graph" className="graph" ref={graphRef}></div>;
 };
 
 export default D3ScatterPlot;

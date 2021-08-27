@@ -193,19 +193,174 @@ export interface ResultsEntity {
 }
 /////////////////////////////////
 export interface ShowWithSeasonInfoType {
-  show_info: ShowType;
-  seasons: SeasonType[];
+  show_info: IMDBShowInfoType;
+  seasons: ImdbSeasonType[];
+}
+export interface ImdbSeasonType {
+  imDbId: string;
+  title: string;
+  fullTitle: string;
+  type: string;
+  year: string;
+  episodes?: ImdbEpisodesType[] | null;
+  errorMessage: string;
+}
+export interface ImdbEpisodesType {
+  id: string;
+  seasonNumber: number;
+  episodeNumber: number;
+  title: string;
+  image: string;
+  year: string;
+  released: string;
+  plot: string;
+  imDbRating: number;
+  imDbRatingCount: number;
 }
 /////////////////////////////
 
 export interface D3EpisodeType {
-  episode_number: number;
-  air_date: string;
-  name: string;
-  overview: string;
-  season_number: number;
-  still_path: string;
-  vote_average: number;
-  vote_count: number;
+  id: string;
+  seasonNumber: number;
+  episodeNumber: number;
+  title: string;
+  image: string;
+  year: string;
+  released: string;
+  plot: string;
+  imDbRating: number;
+  imDbRatingCount: number;
   true_ep_count: number;
+}
+
+//////////////////
+
+export interface SeasonStatData {
+  start: {
+    x: number;
+    y: number;
+  };
+  end: {
+    x: number;
+    y: number;
+  };
+  m: number;
+  b: number;
+  std: number;
+}
+
+///////////////////////////
+
+export interface StarList {
+  id: string;
+  name: string;
+}
+
+export interface ActorList {
+  id: string;
+  image: string;
+  name: string;
+  asCharacter: string;
+}
+
+export interface GenreList {
+  key: string;
+  value: string;
+}
+
+export interface CompanyList {
+  id: string;
+  name: string;
+}
+
+export interface CountryList {
+  key: string;
+  value: string;
+}
+
+export interface LanguageList {
+  key: string;
+  value: string;
+}
+
+export interface BoxOffice {
+  budget: string;
+  openingWeekendUSA: string;
+  grossUSA: string;
+  cumulativeWorldwideGross: string;
+}
+
+export interface Similar {
+  id: string;
+  title: string;
+  fullTitle: string;
+  year: string;
+  image: string;
+  plot: string;
+  directors: string;
+  stars: string;
+  genres: string;
+  imDbRating: string;
+}
+
+export interface CreatorList {
+  id: string;
+  name: string;
+}
+
+export interface TvSeriesInfo {
+  yearEnd: string;
+  creators: string;
+  creatorList: CreatorList[];
+  seasons: string[];
+}
+
+export interface IMDBShowInfoType {
+  id: string;
+  title: string;
+  originalTitle: string;
+  fullTitle: string;
+  type: string;
+  year: string;
+  image: string;
+  releaseDate: string;
+  runtimeMins: string;
+  runtimeStr: string;
+  plot: string;
+  plotLocal: string;
+  plotLocalIsRtl: boolean;
+  awards: string;
+  directors: string;
+  directorList: any[];
+  writers: string;
+  writerList: any[];
+  stars: string;
+  starList: StarList[];
+  actorList: ActorList[];
+  fullCast?: any;
+  genres: string;
+  genreList: GenreList[];
+  companies: string;
+  companyList: CompanyList[];
+  countries: string;
+  countryList: CountryList[];
+  languages: string;
+  languageList: LanguageList[];
+  contentRating: string;
+  imDbRating: string;
+  imDbRatingVotes: string;
+  metacriticRating: string;
+  ratings?: any;
+  wikipedia?: any;
+  posters?: any;
+  images?: any;
+  trailer?: any;
+  boxOffice: BoxOffice;
+  tagline: string;
+  keywords: string;
+  keywordList: string[];
+  similars: Similar[];
+  tvSeriesInfo: TvSeriesInfo;
+  tvEpisodeInfo?: any;
+  errorMessage: string;
 }
