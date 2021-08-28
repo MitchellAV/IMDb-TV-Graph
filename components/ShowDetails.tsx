@@ -27,6 +27,44 @@ const ShowDetails = ({ show_info }: PropType) => {
   } = show_info;
   const num_stars = starList.length;
   const num_seasons = seasons.length;
+
+  const remove_as_duplicates = (words: string[]) => {
+    if (words.length % 2 == 0) {
+      let half_index = words.length / 2;
+
+      let wordA = words[half_index - 1];
+      let wordA_as = wordA;
+      wordA = wordA.slice(0, wordA.length - 2);
+
+      let wordB = words[words.length - 1].replace("…", "");
+      words[words.length - 1] = wordB;
+      if (wordA === wordB || wordA_as === wordB) {
+        return words.slice(-half_index);
+      }
+    }
+
+    return words;
+  };
+
+  const clean_char_name = (char_name: string) => {
+    let char_name_array = char_name.split(" ").filter((name) => {
+      if (
+        isNaN(name as any) &&
+        name !== "episodes" &&
+        name !== "episodes," &&
+        name !== "/" &&
+        name !== "..." &&
+        name.indexOf("(") < 0 &&
+        name.indexOf(")") < 0 &&
+        name.indexOf("-") < 0
+      )
+        return true;
+
+      return false;
+    });
+    char_name_array = remove_as_duplicates(char_name_array);
+    return char_name_array.join(" ");
+  };
   return (
     <div className="show">
       <img className="show__img" src={image} alt={title} />
@@ -43,7 +81,7 @@ const ShowDetails = ({ show_info }: PropType) => {
           <b>Full Title:</b> {fullTitle}
         </p>
         <p className="show__attr">
-          <b>Rating:</b> {imDbRating}/10 with {imDbRatingVotes} votes
+          <b>Rating:</b> {imDbRating}/10 ({imDbRatingVotes} votes)
         </p>
         {/* <p className="show__attr">
           <b>IMDb Votes:</b> {imDbRatingVotes}
@@ -77,6 +115,7 @@ const ShowDetails = ({ show_info }: PropType) => {
               className="link link--show"
               href={`https://www.imdb.com/name/${creator.id}`}
               target="_blank"
+              key={creator.id}
             >
               {creator.name}
             </a>
@@ -86,7 +125,7 @@ const ShowDetails = ({ show_info }: PropType) => {
           <b>Actors:</b>{" "}
           <div className="show__actors">
             {actorList.map((actor) => (
-              <div className="actor">
+              <div className="actor" key={actor.id}>
                 <img className="actor__img" src={actor.image} alt="" />
 
                 <p className="actor__char">
@@ -98,25 +137,7 @@ const ShowDetails = ({ show_info }: PropType) => {
                     {actor.name}
                   </a>
                   <br />
-                  as{" "}
-                  {actor.asCharacter
-                    .split(" ")
-
-                    .filter((name, index, array) => {
-                      if (
-                        isNaN(name as any) &&
-                        name !== "episodes" &&
-                        name !== "episodes," &&
-                        name !== "/" &&
-                        name !== "..." &&
-                        name.indexOf("(") < 0 &&
-                        name.indexOf("-") < 0
-                      )
-                        return true;
-
-                      return false;
-                    })
-                    .join(" ")}
+                  as {clean_char_name(actor.asCharacter)}
                 </p>
               </div>
             ))}
@@ -129,6 +150,7 @@ const ShowDetails = ({ show_info }: PropType) => {
               className="link link--show"
               href={`https://www.imdb.com/search/title/?companies=${company.id}`}
               target="_blank"
+              key={company.id}
             >
               {company.name}
             </a>
@@ -141,6 +163,7 @@ const ShowDetails = ({ show_info }: PropType) => {
               className="link link--show"
               href={`https://www.imdb.com/search/title/?genres=${genre.value}`}
               target="_blank"
+              key={genre.key}
             >
               {genre.value}
             </a>
@@ -153,6 +176,7 @@ const ShowDetails = ({ show_info }: PropType) => {
               className="link link--show"
               href={`https://www.imdb.com/search/keyword/?keywords=${keyword}`}
               target="_blank"
+              key={keyword}
             >
               {keyword}
             </a>

@@ -66,7 +66,7 @@ const SimilarShows = ({ similarShows }: PropType) => {
         return (
           <>
             {is_show && (
-              <div className="similar__show" key={id}>
+              <div className="similar__show" key={index}>
                 <img className="similar__img" src={image} alt={title} />
                 <div className="similar__details">
                   <h3 className="similar__title">{title}</h3>

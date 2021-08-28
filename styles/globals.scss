@@ -12,7 +12,7 @@
 main {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
 }
 
@@ -199,6 +199,7 @@ main {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  align-items: center;
 
   width: max-content;
   margin: 1em;
@@ -298,5 +299,57 @@ main {
 
   &--actor {
     padding: 0.1em 0.4em;
+  }
+}
+
+.table {
+  display: flex;
+  flex-direction: column;
+  &__container {
+    display: flex;
+    flex-direction: column;
+
+    margin: 1em;
+  }
+}
+
+.episode {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+
+  width: 100%;
+  outline: 2px solid black;
+  padding: 0.6em;
+
+  background-color: #f6f6f5;
+
+  &__img {
+    width: 100%;
+    align-self: center;
+    justify-self: center;
+
+    padding-right: 0.6em;
+  }
+
+  &__info {
+    justify-self: start;
+    align-self: center;
+  }
+
+  &__detail {
+    display: flex;
+    align-items: center;
+  }
+  &__span {
+    display: inline-block;
+  }
+}
+.icon {
+  display: block;
+  height: 1em;
+  width: 1em;
+  &--star {
+    fill: #c39400;
+    margin-right: 0.2em;
   }
 }

@@ -11,6 +11,7 @@ import Head from "next/head";
 import { RefObject, useEffect, useLayoutEffect, useRef, useState } from "react";
 import ShowDetails from "../../components/ShowDetails";
 import SimilarShows from "../../components/SimilarShows";
+import EpisodesTable from "../../components/EpisodesTable";
 
 interface ShowProps {
   show: ShowWithSeasonInfoType;
@@ -102,11 +103,10 @@ const get_trendline_for_seasons = (
 const Show = ({ show }: ShowProps) => {
   console.log(show);
   const { show_info } = show;
-  const { fullTitle, originalTitle, title, similars } = show_info;
+  const { title, similars } = show_info;
   const seasons = show.seasons;
 
   const episodes_info = format_episodes_d3_scatter(seasons);
-  console.log(episodes_info);
   const trendline_points = get_trendline_for_seasons(seasons, episodes_info);
 
   return (
@@ -124,6 +124,7 @@ const Show = ({ show }: ShowProps) => {
       <D3ScatterPlot data={episodes_info} trendlines={trendline_points} />
       <ShowDetails show_info={show_info} />
       <SimilarShows similarShows={similars} />
+      <EpisodesTable episodes={episodes_info} season_stats={trendline_points} />
     </main>
   );
 };

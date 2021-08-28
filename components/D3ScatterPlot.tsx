@@ -287,7 +287,7 @@ const D3ScatterPlot = ({ data, trendlines }: D3ScatterPlotType) => {
       if (trendline) {
         const { start, end, std } = trendline;
 
-        draw_trendline(start, end, colors[(index + 1) % colors.length], std);
+        draw_trendline(start, end, colors[(index + 1) % colors.length]);
       }
     });
 
