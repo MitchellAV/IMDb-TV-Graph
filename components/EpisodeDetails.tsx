@@ -43,10 +43,10 @@ const EpisodeDetails = ({ episode }: PropType) => {
             {imDbRating} ({imDbRatingCount} votes)
           </span>
         </div>
-        {/* <p className="episode__detail">Released: {released}</p> */}
+        <p className="episode__detail">Released: {released}</p>
         <p className="episode__detail"></p>
 
-        {/* <p className="episode__detail">{plot}</p> */}
+        <p className="episode__detail">{plot}</p>
       </div>
     </div>
   );

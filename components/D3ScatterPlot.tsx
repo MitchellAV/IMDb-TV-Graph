@@ -6,10 +6,15 @@ import head from "next/head";
 
 interface D3ScatterPlotType {
   data: D3EpisodeType[];
-  trendlines: (SeasonStatData | null)[];
+  season_statistics: (SeasonStatData | null)[];
+  episode_statistics: SeasonStatData | null;
 }
 
-const D3ScatterPlot = ({ data, trendlines }: D3ScatterPlotType) => {
+const D3ScatterPlot = ({
+  data,
+  season_statistics,
+  episode_statistics,
+}: D3ScatterPlotType) => {
   const useRefDimensions = (ref: RefObject<any>) => {
     const [dimensions, setDimensions] = useState({ width: 1, height: 2 });
 
@@ -244,6 +249,18 @@ const D3ScatterPlot = ({ data, trendlines }: D3ScatterPlotType) => {
         window.open(`https://www.imdb.com/title/${d.id}`, "_blank");
       });
 
+    // const zoom = d3.zoom().scaleExtent([0.5, 32]).on("zoom", zoomed);
+
+    // svg.call(zoom).call(zoom.transform, d3.zoomIdentity);
+
+    // function zoomed({ transform }) {
+    //   const zx = transform.rescaleX(x).interpolate(d3.interpolateRound);
+    //   const zy = transform.rescaleY(y).interpolate(d3.interpolateRound);
+    //   gDot.attr("transform", transform).attr("stroke-width", 5 / transform.k);
+    //   gx.call(xAxis, zx);
+    //   gy.call(yAxis, zy);
+    //   gGrid.call(grid, zx, zy);
+    // }
     const draw_trendline = (
       start: {
         x: number;
@@ -254,10 +271,10 @@ const D3ScatterPlot = ({ data, trendlines }: D3ScatterPlotType) => {
         y: number;
       },
       color: string,
-      std?: number
+      std_err?: number
     ) => {
-      if (std) {
-        const sigma95 = 1.96 * std;
+      if (std_err) {
+        const sigma95 = std_err;
         svg
           .append("line") // attach a line
           .attr("stroke", color)
@@ -283,11 +300,16 @@ const D3ScatterPlot = ({ data, trendlines }: D3ScatterPlotType) => {
         .attr("x2", (d) => xScale(end.x)) // x position of the second end of the line
         .attr("y2", (d) => yScale(end.y));
     };
-    trendlines.forEach((trendline, index) => {
+    season_statistics.forEach((trendline, index) => {
       if (trendline) {
-        const { start, end, std } = trendline;
+        const { start, end, std_err } = trendline;
 
-        draw_trendline(start, end, colors[(index + 1) % colors.length]);
+        draw_trendline(
+          start,
+          end,
+          colors[(index + 1) % colors.length],
+          std_err
+        );
       }
     });
 

@@ -1,10 +1,12 @@
-import { IMDBShowInfoType } from "../types";
+import { IMDBShowInfoType, SeasonStatData } from "../types";
+import ShowStatistics from "./ShowStatistics";
 
 interface PropType {
   show_info: IMDBShowInfoType;
+  episode_statistics: SeasonStatData | null;
 }
 
-const ShowDetails = ({ show_info }: PropType) => {
+const ShowDetails = ({ show_info, episode_statistics }: PropType) => {
   const {
     actorList,
     companyList,
@@ -25,6 +27,7 @@ const ShowDetails = ({ show_info }: PropType) => {
     title,
     tvSeriesInfo: { creatorList, seasons },
   } = show_info;
+
   const num_stars = starList.length;
   const num_seasons = seasons.length;
 
@@ -92,6 +95,11 @@ const ShowDetails = ({ show_info }: PropType) => {
         <p className="show__attr">
           <b>Number of Seasons:</b> {num_seasons}
         </p>
+        {episode_statistics && (
+          <p className="show__attr">
+            <b>Number of Episodes:</b> {episode_statistics.n}
+          </p>
+        )}
         <p className="show__attr">
           <b>Episode Runtime:</b> {runtimeStr}
         </p>
@@ -126,7 +134,17 @@ const ShowDetails = ({ show_info }: PropType) => {
           <div className="show__actors">
             {actorList.map((actor) => (
               <div className="actor" key={actor.id}>
-                <img className="actor__img" src={actor.image} alt="" />
+                <a
+                  className="link "
+                  href={`https://www.imdb.com/name/${actor.id}`}
+                  target="_blank"
+                >
+                  <img
+                    className="actor__img"
+                    src={actor.image}
+                    alt={actor.name}
+                  />
+                </a>
 
                 <p className="actor__char">
                   <a
@@ -182,6 +200,9 @@ const ShowDetails = ({ show_info }: PropType) => {
             </a>
           ))}
         </p>
+        {episode_statistics && (
+          <ShowStatistics episode_statistics={episode_statistics} />
+        )}
       </div>
     </div>
   );

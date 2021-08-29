@@ -4,13 +4,17 @@ import EpisodesDisplay from "./EpisodesDisplay";
 
 interface PropType {
   episodes: D3EpisodeType[];
-  season_stats: (SeasonStatData | null)[];
+  season_statistics: (SeasonStatData | null)[];
+  episode_statistics: SeasonStatData | null;
 }
-const EpisodesTable = ({ episodes, season_stats }: PropType) => {
+const EpisodesTable = ({
+  episodes,
+  season_statistics,
+  episode_statistics,
+}: PropType) => {
   const [allEpisodes, setAllEpisodes] = useState(episodes);
   const [display, setDisplay] = useState("episodes");
   const [sortBy, setSortBy] = useState("ep-desc");
-  console.log(episodes);
 
   return (
     <div className="table">

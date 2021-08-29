@@ -236,6 +236,7 @@ export interface D3EpisodeType {
 //////////////////
 
 export interface SeasonStatData {
+  season_number: number;
   start: {
     x: number;
     y: number;
@@ -244,9 +245,25 @@ export interface SeasonStatData {
     x: number;
     y: number;
   };
-  m: number;
-  b: number;
-  std: number;
+
+  n: number;
+  line_mb: {
+    m: number;
+    b: number;
+  };
+  range_x: [number, number];
+  range_y: [number, number];
+  median_y: number;
+  sum_y: number;
+  mean_y: number;
+  std_y: number;
+  iqr: number;
+  variance_y: number;
+  r2: number;
+  s_corr: number;
+  s_cov: number;
+  f: (x: number) => number;
+  std_err: number;
 }
 
 ///////////////////////////
