@@ -48,35 +48,29 @@ const EpisodesTable = ({ episodes, season_statistics }: PropType) => {
                 name="season_sort"
                 onChange={(e) => setSeasonSortBy(e.currentTarget.value)}
               >
-                <option value="season-asc">Season - Old to New</option>
-                <option value="season-desc">Season - New to Old</option>
+                <option value="season-asc">Season - Oldest</option>
+                <option value="season-desc">Season - Latest</option>
                 <option value="avg-rating-desc">
-                  Average Rating - High to Low
+                  Average Rating - Highest
                 </option>
-                <option value="avg-rating-asc">
-                  Average Rating - Low to High
-                </option>
-                <option value="median-desc">Median - High to Low</option>
-                <option value="median-asc">Median - Low to High</option>
+                <option value="avg-rating-asc">Average Rating - Lowest</option>
+                <option value="median-desc">Median - Highest</option>
+                <option value="median-asc">Median - Lowest</option>
                 <option value="slope-desc">
-                  Trendline Direction - Positive to Negative
+                  Trendline Direction - Most Positive
                 </option>
                 <option value="slope-asc">
-                  Trendline Direction - Negative to Positive
+                  Trendline Direction - Most Negative
                 </option>
-                <option value="std-asc">
-                  Standard Deviation - Low to High
-                </option>
-                <option value="std-desc">
-                  Standard Deviation - High to Low
-                </option>
-                <option value="r2-desc">R-Squared - High to Low</option>
-                <option value="r2-asc">R-Squared - Low to High</option>
+                <option value="std-asc">Standard Deviation - Lowest</option>
+                <option value="std-desc">Standard Deviation - Highest</option>
+                <option value="r2-desc">R-Squared - Highest</option>
+                <option value="r2-asc">R-Squared - Lowest</option>
                 <option value="std-err-asc">
-                  Standard Error of Regression - Low to High
+                  Standard Error of Regression - Lowest
                 </option>
                 <option value="std-err-desc">
-                  Standard Error of Regression - High to Low
+                  Standard Error of Regression - Highest
                 </option>
               </select>
             </>
@@ -88,12 +82,12 @@ const EpisodesTable = ({ episodes, season_statistics }: PropType) => {
             name="ep_sort"
             onChange={(e) => setEpSortBy(e.currentTarget.value)}
           >
-            <option value="ep-asc">Episode - Old to New </option>
-            <option value="ep-desc">Episode - New to Old</option>
-            <option value="rating-desc">Rating - High to Low</option>
-            <option value="rating-asc">Rating - Low to High</option>
-            <option value="votes-desc">Votes - High to Low</option>
-            <option value="votes-asc">Votes - Low to High</option>
+            <option value="ep-asc">Episode - Oldest </option>
+            <option value="ep-desc">Episode - Latest</option>
+            <option value="rating-desc">Rating - Highest</option>
+            <option value="rating-asc">Rating - Lowest</option>
+            <option value="votes-desc">Votes - Highest</option>
+            <option value="votes-asc">Votes - Lowest</option>
           </select>
         </form>
       </div>

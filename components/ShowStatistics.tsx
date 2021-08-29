@@ -42,28 +42,32 @@ const ShowStatistics = ({ episode_statistics }: PropType) => {
       <h3 className="show__header">Statistics:</h3>
 
       <div className="show__attr--table">
-        <h4>Episode Ratings</h4>
+        <h3>Episode Ratings</h3>
         <table className="rating-table">
-          <tr className="rating-table__row">
-            <th className="rating-table__data  rating-table__data--header">
-              Lowest
-            </th>
-            <th className="rating-table__data  rating-table__data--header">
-              Average
-            </th>
-            <th className="rating-table__data  rating-table__data--header">
-              Median
-            </th>
-            <th className="rating-table__data  rating-table__data--header">
-              Highest
-            </th>
-          </tr>
-          <tr className="rating-table__row">
-            <td className="rating-table__data"> {low_rating}</td>
-            <td className="rating-table__data">{mean_y.toFixed(1)}</td>
-            <td className="rating-table__data">{median_y.toFixed(1)}</td>
-            <td className="rating-table__data">{high_rating}</td>
-          </tr>
+          <thead>
+            <tr className="rating-table__row">
+              <th className="rating-table__data  rating-table__data--header">
+                Lowest
+              </th>
+              <th className="rating-table__data  rating-table__data--header">
+                Average
+              </th>
+              <th className="rating-table__data  rating-table__data--header">
+                Median
+              </th>
+              <th className="rating-table__data  rating-table__data--header">
+                Highest
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr className="rating-table__row">
+              <td className="rating-table__data"> {low_rating}</td>
+              <td className="rating-table__data">{mean_y.toFixed(1)}</td>
+              <td className="rating-table__data">{median_y.toFixed(1)}</td>
+              <td className="rating-table__data">{high_rating}</td>
+            </tr>
+          </tbody>
         </table>
       </div>
       <p className="show__attr">

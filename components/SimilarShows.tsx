@@ -1,5 +1,4 @@
 import { Similar } from "../types";
-import { useRouter } from "next/router";
 
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -21,16 +20,7 @@ const get_tmdb_id = async (imdb_id: string) => {
 };
 
 const SimilarShows = ({ similarShows }: PropType) => {
-  const router = useRouter();
   const [exists, setExists] = useState<string[]>([]);
-  // const showRedirect = async (imdb_id: string) => {
-  //   try {
-  //     const tmdb_id = await get_tmdb_id(imdb_id);
-  //     console.log(router);
-
-  //     router.push(`/show/${tmdb_id}`);
-  //   } catch (err) {}
-  // };
 
   useEffect(() => {
     const fetch_is_show = async () => {
@@ -71,7 +61,7 @@ const SimilarShows = ({ similarShows }: PropType) => {
                 <div className="similar__details">
                   <h3 className="similar__title">{title}</h3>
                   <p className="similar__years"> {year}</p>
-                  <p className="similar__rating">Score: {imDbRating}</p>
+                  <p className="similar__rating">Rating: {imDbRating}</p>
                   <p className="similar__genres">{genres}</p>
                   <p className="similar__plot">{plot}</p>
                 </div>
