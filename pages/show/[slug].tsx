@@ -1,160 +1,21 @@
 import { GetServerSideProps } from "next";
 import axios from "axios";
-import {
-  D3EpisodeType,
-  ImdbSeasonType,
-  SeasonStatData,
-  ShowWithSeasonInfoType,
-} from "../../types";
+import { ShowWithSeasonInfoType } from "../../types";
 import D3ScatterPlot from "../../components/D3ScatterPlot";
 import Head from "next/head";
-import { RefObject, useEffect, useLayoutEffect, useRef, useState } from "react";
+
 import ShowDetails from "../../components/ShowDetails";
 import SimilarShows from "../../components/SimilarShows";
 import EpisodesTable from "../../components/EpisodesTable";
-
 import {
-  extent,
-  sum,
-  mean,
-  median,
-  standardDeviation,
-  variance,
-  interquartileRange,
-  linearRegression,
-  linearRegressionLine,
-  rSquared,
-  sampleCorrelation,
-  sampleCovariance,
-} from "simple-statistics";
+  calculate_statistics_for_episodes,
+  calculate_statistics_for_seasons,
+  format_episodes_d3_scatter,
+} from "../../util/statistics";
 
 interface ShowProps {
   show: ShowWithSeasonInfoType;
 }
-
-const format_episodes_d3_scatter = (seasons: ImdbSeasonType[]) => {
-  const episodes_info: D3EpisodeType[] = [];
-  let true_ep_count = 1;
-  seasons.forEach((season) => {
-    if (season.episodes) {
-      const ep = season.episodes.forEach((ep) => {
-        episodes_info.push({
-          ...ep,
-          true_ep_count,
-        });
-        true_ep_count++;
-      });
-    }
-  });
-
-  return episodes_info;
-};
-
-const calculate_statistics = (
-  season_episodes: D3EpisodeType[],
-  season_number?: number
-): SeasonStatData | null => {
-  let ratings = season_episodes
-    .map((ep) => {
-      return { x: ep.true_ep_count, y: ep.imDbRating };
-    })
-    .filter((rating) => rating.y !== 0);
-
-  if (ratings.length > 1) {
-    // const sumX = ratings.reduce((sum, ep) => {
-    //   return sum + ep.x;
-    // }, 0);
-    // const sumX2 = ratings.reduce((sum, ep) => {
-    //   return sum + ep.x * ep.x;
-    // }, 0);
-    // const sumY = ratings.reduce((sum, ep) => {
-    //   return sum + ep.y;
-    // }, 0);
-    // const sumXY = ratings.reduce((sum, ep) => {
-    //   return sum + ep.x * ep.y;
-    // }, 0);
-
-    // const avgY = sumY / n;
-
-    // const std = Math.sqrt(
-    //   ratings.reduce((sum, ep) => {
-    //     return sum + Math.pow(ep.y - avgY, 2);
-    //   }, 0) / n
-    // );
-
-    // const m = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
-
-    // const b = (sumY - m * sumX) / n;
-    const n = ratings.length;
-    const x = ratings.map((ep) => ep.x);
-    const y = ratings.map((ep) => ep.y);
-    const data_points = ratings.map((ep) => [ep.x, ep.y]);
-    const range_x = extent(x);
-    const range_y = extent(y);
-    const sum_y = sum(y);
-    const mean_y = mean(y);
-    const median_y = median(y);
-    const std_y = standardDeviation(y);
-    const variance_y = variance(y);
-    const iqr = interquartileRange(y);
-    const line_mb = linearRegression(data_points);
-    const f = linearRegressionLine(line_mb);
-    const r2 = rSquared(data_points, f);
-    const s_corr = sampleCorrelation(x, y);
-    const s_cov = sampleCovariance(x, y);
-    const std_err = Math.sqrt(
-      ratings.reduce((sum, ep) => {
-        return sum + Math.pow(ep.y - f(ep.x), 2);
-      }, 0) /
-        (n - 2)
-    );
-
-    const startX = ratings[0].x;
-    const endX = ratings[ratings.length - 1].x;
-
-    const seasonStatData = {
-      season_number: season_number || 0,
-      start: { x: startX, y: f(startX) },
-      end: { x: endX, y: f(endX) },
-      n,
-      line_mb,
-      range_x,
-      range_y,
-      median_y,
-      sum_y,
-      mean_y,
-      std_y,
-      iqr,
-      variance_y,
-      r2,
-      s_corr,
-      s_cov,
-      f,
-      std_err,
-    };
-
-    return seasonStatData;
-  }
-  return null;
-};
-
-const calculate_statistics_for_seasons = (
-  seasons: ImdbSeasonType[],
-  episodes_info: D3EpisodeType[]
-) => {
-  const season_statistics = [];
-  for (let index = 1; index <= seasons.length; index++) {
-    const currentSeason = episodes_info.filter(
-      (ep) => ep.seasonNumber == index
-    );
-    season_statistics.push(calculate_statistics(currentSeason, index));
-  }
-  return season_statistics;
-};
-const calculate_statistics_for_episodes = (episodes_info: D3EpisodeType[]) => {
-  const episodes_statistics = calculate_statistics(episodes_info);
-  return episodes_statistics;
-};
 
 const Show = ({ show }: ShowProps) => {
   console.log(show);
@@ -163,12 +24,12 @@ const Show = ({ show }: ShowProps) => {
   const seasons = show.seasons;
 
   const episodes_info = format_episodes_d3_scatter(seasons);
+
+  const episode_statistics = calculate_statistics_for_episodes(episodes_info);
   const season_statistics = calculate_statistics_for_seasons(
     seasons,
     episodes_info
   );
-  const episode_statistics = calculate_statistics_for_episodes(episodes_info);
-  console.log(season_statistics);
   console.log(episode_statistics);
 
   return (
@@ -186,7 +47,6 @@ const Show = ({ show }: ShowProps) => {
       <D3ScatterPlot
         data={episodes_info}
         season_statistics={season_statistics}
-        episode_statistics={episode_statistics}
       />
       <ShowDetails
         show_info={show_info}
@@ -196,7 +56,6 @@ const Show = ({ show }: ShowProps) => {
       <EpisodesTable
         episodes={episodes_info}
         season_statistics={season_statistics}
-        episode_statistics={episode_statistics}
       />
     </main>
   );

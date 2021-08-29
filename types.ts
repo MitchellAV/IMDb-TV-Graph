@@ -207,29 +207,29 @@ export interface ImdbSeasonType {
 }
 export interface ImdbEpisodesType {
   id: string;
-  seasonNumber: number;
-  episodeNumber: number;
+  seasonNumber: string;
+  episodeNumber: string;
   title: string;
   image: string;
   year: string;
   released: string;
   plot: string;
   imDbRating: number;
-  imDbRatingCount: number;
+  imDbRatingCount: string;
 }
 /////////////////////////////
 
 export interface D3EpisodeType {
   id: string;
-  seasonNumber: number;
-  episodeNumber: number;
+  seasonNumber: string;
+  episodeNumber: string;
   title: string;
   image: string;
   year: string;
   released: string;
   plot: string;
   imDbRating: number;
-  imDbRatingCount: number;
+  imDbRatingCount: string;
   true_ep_count: number;
 }
 

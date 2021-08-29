@@ -318,6 +318,7 @@ main {
 .table {
   display: flex;
   flex-direction: column;
+  width: 100%;
   &__container {
     display: flex;
     flex-direction: column;
@@ -382,4 +383,12 @@ main {
     &--header {
     }
   }
+}
+
+.season {
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  border-bottom: 3px solid black;
 }

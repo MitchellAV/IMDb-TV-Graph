@@ -2,19 +2,13 @@ import { RefObject, useEffect, useRef, useState } from "react";
 
 import * as d3 from "d3";
 import { D3EpisodeType, SeasonStatData } from "../types";
-import head from "next/head";
 
 interface D3ScatterPlotType {
   data: D3EpisodeType[];
   season_statistics: (SeasonStatData | null)[];
-  episode_statistics: SeasonStatData | null;
 }
 
-const D3ScatterPlot = ({
-  data,
-  season_statistics,
-  episode_statistics,
-}: D3ScatterPlotType) => {
+const D3ScatterPlot = ({ data, season_statistics }: D3ScatterPlotType) => {
   const useRefDimensions = (ref: RefObject<any>) => {
     const [dimensions, setDimensions] = useState({ width: 1, height: 2 });
 
@@ -229,9 +223,32 @@ const D3ScatterPlot = ({
     // Select all circles and bind data to the selection
 
     // Create the scatter variable: where both the circles and the brush take place
-    const scatter = svg.append("g").attr("clip-path", "url(#clip)");
+    const data_points = svg.append("g").attr("clip-path", "url(#clip)");
+    data_points
+      .append("path")
+      .datum(data)
+      .attr("fill", "none")
+      .attr("stroke-opacity", 0.5)
+      .attr("stroke", "black")
+      .attr("stroke-width", 1.5)
 
-    scatter
+      .attr(
+        "d",
+        // @ts-ignore
+        d3
+          .line()
+          // @ts-ignore
+
+          .x((d: D3EpisodeType) => {
+            return xScale(d.true_ep_count);
+          })
+          // @ts-ignore
+
+          .y((d: D3EpisodeType) => {
+            return yScale(d.imDbRating);
+          })
+      );
+    data_points
       .append("g")
       .attr("stroke", "#000")
       .attr("stroke-opacity", 0.2)
@@ -240,7 +257,7 @@ const D3ScatterPlot = ({
       .join("circle")
       .attr("cx", (d) => xScale(d.true_ep_count))
       .attr("cy", (d) => yScale(d.imDbRating))
-      .attr("fill", (d) => colors[d.seasonNumber % colors.length])
+      .attr("fill", (d) => colors[parseInt(d.seasonNumber) % colors.length])
       .attr("r", radius)
       .on("mouseover", mouseover)
       // .on("mousemove", mousemove)
@@ -307,8 +324,8 @@ const D3ScatterPlot = ({
         draw_trendline(
           start,
           end,
-          colors[(index + 1) % colors.length],
-          std_err
+          colors[(index + 1) % colors.length]
+          // std_err
         );
       }
     });

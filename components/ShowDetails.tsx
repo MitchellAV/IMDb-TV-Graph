@@ -187,7 +187,7 @@ const ShowDetails = ({ show_info, episode_statistics }: PropType) => {
             </a>
           ))}
         </p>
-        <p className="show__attr">
+        {/* <p className="show__attr">
           <b>Tags:</b>{" "}
           {keywordList.map((keyword) => (
             <a
@@ -199,7 +199,7 @@ const ShowDetails = ({ show_info, episode_statistics }: PropType) => {
               {keyword}
             </a>
           ))}
-        </p>
+        </p> */}
         {episode_statistics && (
           <ShowStatistics episode_statistics={episode_statistics} />
         )}

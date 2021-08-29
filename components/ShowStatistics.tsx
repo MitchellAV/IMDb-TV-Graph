@@ -40,12 +40,12 @@ const ShowStatistics = ({ episode_statistics }: PropType) => {
   return (
     <div className="show__statistics">
       <h3 className="show__header">Statistics:</h3>
-      {/* <p className="show__attr">
+      <p className="show__attr">
         <b>
           R<sup>2</sup>
         </b>
         : {r2.toFixed(2)}
-      </p> */}
+      </p>
       <div className="show__attr--table">
         <h4>Episode Ratings</h4>
         <table className="rating-table">
@@ -70,25 +70,25 @@ const ShowStatistics = ({ episode_statistics }: PropType) => {
             <td className="rating-table__data">{high_rating}</td>
           </tr>
         </table>
-      </div>{" "}
+      </div>
       <p className="show__attr">
         <b>Number of Episodes</b>: {n}
       </p>
       <p className="show__attr">
         <b>Standard Deviation</b>: ±{std_y.toFixed(2)}
       </p>
-      {/* <p className="show__attr">
+      <p className="show__attr">
         <b>Standard Error of Regression</b>: {std_err.toFixed(2)}
-      </p> */}
-      {/* <p className="show__attr">
+      </p>
+      <p className="show__attr">
         <b>Sample Correlation</b>: {s_corr.toFixed(2)}
-      </p> */}
-      {/* <p className="show__attr">
+      </p>
+      <p className="show__attr">
         <b>Sample Covariance</b>: {s_cov.toFixed(2)}
-      </p> */}
-      {/* <p className="show__attr">
+      </p>
+      <p className="show__attr">
         <b>Variance</b>: {variance_y.toFixed(2)}
-      </p> */}
+      </p>
       <p className="show__attr">
         <b>Trend Direction</b>: {trend_to_words(m)}
       </p>
