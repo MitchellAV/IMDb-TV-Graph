@@ -21,8 +21,6 @@ export const format_episodes_d3_scatter = (seasons: ImdbSeasonType[]) => {
   seasons.forEach((season) => {
     if (season.episodes) {
       season.episodes.forEach((ep) => {
-        console.log(ep);
-
         episodes_info.push({
           ...ep,
           true_ep_count,
@@ -115,7 +113,10 @@ export const calculate_statistics_for_seasons = (
     const currentSeason = episodes_info.filter(
       (ep) => parseInt(ep.seasonNumber) === index
     );
-    season_statistics.push(calculate_statistics(currentSeason, index));
+    const currentSeasonStats = calculate_statistics(currentSeason, index);
+    if (currentSeasonStats) {
+      season_statistics.push(currentSeasonStats);
+    }
   }
   return season_statistics;
 };
@@ -125,12 +126,12 @@ export const sort_episodes = (episodes: D3EpisodeType[], sort_by: string) => {
   switch (sort_by) {
     case "ep-desc":
       sorted_episodes = episodes.sort(
-        (a, b) => a.true_ep_count - b.true_ep_count
+        (a, b) => b.true_ep_count - a.true_ep_count
       );
       break;
     case "ep-asc":
       sorted_episodes = episodes.sort(
-        (a, b) => b.true_ep_count - a.true_ep_count
+        (a, b) => a.true_ep_count - b.true_ep_count
       );
       break;
     case "rating-desc":
@@ -160,57 +161,100 @@ export const sort_episodes = (episodes: D3EpisodeType[], sort_by: string) => {
 
     default:
       sorted_episodes = episodes.sort(
-        (a, b) => b.true_ep_count - a.true_ep_count
+        (a, b) => a.true_ep_count - b.true_ep_count
       );
       break;
   }
   return sorted_episodes;
 };
-export const sort_seasons = (episodes: D3EpisodeType[], sort_by: string) => {
-  let sorted_episodes = episodes;
+export const sort_seasons = (
+  season_episodes: (D3EpisodeType[] | undefined)[],
+  season_statistics: SeasonStatData[],
+  sort_by: string
+) => {
+  const seasons_map = new Map<number, D3EpisodeType[]>();
+
+  season_episodes.forEach((season) => {
+    if (season) {
+      const season_number = parseInt(season[0].seasonNumber);
+      seasons_map.set(season_number, season);
+    }
+  });
+
+  let sorted_seasons = season_statistics;
   switch (sort_by) {
-    case "ep-desc":
-      sorted_episodes = episodes.sort(
-        (a, b) => a.true_ep_count - b.true_ep_count
+    case "season-desc":
+      sorted_seasons = season_statistics.sort(
+        (a, b) => b.season_number - a.season_number
       );
       break;
-    case "ep-asc":
-      sorted_episodes = episodes.sort(
-        (a, b) => b.true_ep_count - a.true_ep_count
+    case "season-asc":
+      sorted_seasons = season_statistics.sort(
+        (a, b) => a.season_number - b.season_number
       );
       break;
-    case "rating-desc":
-      sorted_episodes = episodes.sort(
-        (a, b) =>
-          b.imDbRating - a.imDbRating ||
-          parseInt(b.imDbRatingCount) - parseInt(a.imDbRatingCount)
+    case "avg-rating-desc":
+      sorted_seasons = season_statistics.sort((a, b) => b.mean_y - a.mean_y);
+      break;
+    case "avg-rating-asc":
+      sorted_seasons = season_statistics.sort((a, b) => a.mean_y - b.mean_y);
+      break;
+    case "median-desc":
+      sorted_seasons = season_statistics.sort(
+        (a, b) => b.median_y - a.median_y
       );
       break;
-    case "rating-asc":
-      sorted_episodes = episodes.sort(
-        (a, b) =>
-          a.imDbRating - b.imDbRating ||
-          parseInt(a.imDbRatingCount) - parseInt(b.imDbRatingCount)
+    case "median-asc":
+      sorted_seasons = season_statistics.sort(
+        (a, b) => a.median_y - b.median_y
       );
       break;
-    case "votes-desc":
-      sorted_episodes = episodes.sort(
-        (a, b) => parseInt(b.imDbRatingCount) - parseInt(a.imDbRatingCount)
+    case "slope-desc":
+      sorted_seasons = season_statistics.sort(
+        (a, b) => b.line_mb.m - a.line_mb.m
       );
       break;
-    case "votes-asc":
-      sorted_episodes = episodes.sort(
-        (a, b) => parseInt(a.imDbRatingCount) - parseInt(b.imDbRatingCount)
+    case "slope-asc":
+      sorted_seasons = season_statistics.sort(
+        (a, b) => a.line_mb.m - b.line_mb.m
       );
+      break;
+    case "std-desc":
+      sorted_seasons = season_statistics.sort((a, b) => b.std_y - a.std_y);
+      break;
+    case "std-asc":
+      sorted_seasons = season_statistics.sort((a, b) => a.std_y - b.std_y);
+      break;
+    case "r2-desc":
+      sorted_seasons = season_statistics.sort((a, b) => b.r2 - a.r2);
+      break;
+    case "r2-asc":
+      sorted_seasons = season_statistics.sort((a, b) => a.r2 - b.r2);
+      break;
+    case "std-err-desc":
+      sorted_seasons = season_statistics.sort((a, b) => b.std_err - a.std_err);
+      break;
+    case "std-err-asc":
+      sorted_seasons = season_statistics.sort((a, b) => a.std_err - b.std_err);
       break;
 
     default:
-      sorted_episodes = episodes.sort(
-        (a, b) => b.true_ep_count - a.true_ep_count
+      sorted_seasons = season_statistics.sort(
+        (a, b) => a.season_number - b.season_number
       );
       break;
   }
-  return sorted_episodes;
+
+  const sorted_season_episodes: D3EpisodeType[][] = [];
+  sorted_seasons.forEach((season) => {
+    const { season_number } = season;
+    const currentSeason = seasons_map.get(season_number);
+    if (currentSeason) {
+      sorted_season_episodes.push(currentSeason);
+    }
+  });
+
+  return sorted_season_episodes;
 };
 
 export const separate_seasons = (episodes: D3EpisodeType[]) => {
@@ -229,9 +273,11 @@ export const separate_seasons = (episodes: D3EpisodeType[]) => {
     }
   }
   const season_numbers = [...season_episodes_map.keys()].sort((a, b) => a - b);
-  let season_episodes = season_numbers.map((number) =>
-    season_episodes_map.get(number)
-  );
-
+  let season_episodes = season_numbers.map((number) => {
+    const season_episodes = season_episodes_map.get(number);
+    if (season_episodes) {
+      return season_episodes;
+    }
+  });
   return season_episodes;
 };

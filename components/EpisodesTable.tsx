@@ -4,23 +4,28 @@ import {
   calculate_statistics_for_seasons,
   separate_seasons,
   sort_episodes,
+  sort_seasons,
 } from "../util/statistics";
 import EpisodesDisplay from "./EpisodesDisplay";
 import SeasonsDisplay from "./SeasonsDisplay";
 
 interface PropType {
   episodes: D3EpisodeType[];
-  season_statistics: (SeasonStatData | null)[];
+  season_statistics: SeasonStatData[];
 }
 
 const EpisodesTable = ({ episodes, season_statistics }: PropType) => {
-  const [allEpisodes, setAllEpisodes] = useState(episodes);
-  const [display, setDisplay] = useState("episodes");
-  const [epSortBy, setEpSortBy] = useState("ep-desc");
-  const [seasonSortBy, setSeasonSortBy] = useState("ep-desc");
+  const [display, setDisplay] = useState("seasons");
+  const [epSortBy, setEpSortBy] = useState("ep-asc");
+  const [seasonSortBy, setSeasonSortBy] = useState("season-asc");
 
   let sorted_episodes = sort_episodes(episodes, epSortBy);
   let season_episodes = separate_seasons(sorted_episodes);
+  let sorted_seasons = sort_seasons(
+    season_episodes,
+    season_statistics,
+    seasonSortBy
+  );
 
   return (
     <div className="table">
@@ -35,31 +40,60 @@ const EpisodesTable = ({ episodes, season_statistics }: PropType) => {
             <option value="seasons">Seasons</option>
             <option value="episodes">Episodes</option>
           </select>
-          <label htmlFor="ep_sort">Sort by:</label>
+          {display === "seasons" && (
+            <>
+              <label htmlFor="season_sort">Sort Season By:</label>
+              <select
+                id="season_sort"
+                name="season_sort"
+                onChange={(e) => setSeasonSortBy(e.currentTarget.value)}
+              >
+                <option value="season-asc">Season - Old to New</option>
+                <option value="season-desc">Season - New to Old</option>
+                <option value="avg-rating-desc">
+                  Average Rating - High to Low
+                </option>
+                <option value="avg-rating-asc">
+                  Average Rating - Low to High
+                </option>
+                <option value="median-desc">Median - High to Low</option>
+                <option value="median-asc">Median - Low to High</option>
+                <option value="slope-desc">
+                  Trendline Direction - Positive to Negative
+                </option>
+                <option value="slope-asc">
+                  Trendline Direction - Negative to Positive
+                </option>
+                <option value="std-asc">
+                  Standard Deviation - Low to High
+                </option>
+                <option value="std-desc">
+                  Standard Deviation - High to Low
+                </option>
+                <option value="r2-desc">R-Squared - High to Low</option>
+                <option value="r2-asc">R-Squared - Low to High</option>
+                <option value="std-err-asc">
+                  Standard Error of Regression - Low to High
+                </option>
+                <option value="std-err-desc">
+                  Standard Error of Regression - High to Low
+                </option>
+              </select>
+            </>
+          )}
+
+          <label htmlFor="ep_sort">Sort Episodes By:</label>
           <select
             id="ep_sort"
             name="ep_sort"
             onChange={(e) => setEpSortBy(e.currentTarget.value)}
           >
-            <option value="ep-desc">Episode Number - Desc</option>
-            <option value="ep-asc">Episode Number - Asc </option>
-            <option value="rating-desc">Rating - Desc</option>
-            <option value="rating-asc">Rating - Asc</option>
-            <option value="votes-desc">Votes - Desc</option>
-            <option value="votes-asc">Votes - Asc</option>
-          </select>
-          <label htmlFor="season_sort">Sort by:</label>
-          <select
-            id="season_sort"
-            name="season_sort"
-            onChange={(e) => setSeasonSortBy(e.currentTarget.value)}
-          >
-            <option value="ep-desc">Episode Number - Desc</option>
-            <option value="ep-asc">Episode Number - Asc </option>
-            <option value="rating-desc">Rating - Desc</option>
-            <option value="rating-asc">Rating - Asc</option>
-            <option value="votes-desc">Votes - Desc</option>
-            <option value="votes-asc">Votes - Asc</option>
+            <option value="ep-asc">Episode - Old to New </option>
+            <option value="ep-desc">Episode - New to Old</option>
+            <option value="rating-desc">Rating - High to Low</option>
+            <option value="rating-asc">Rating - Low to High</option>
+            <option value="votes-desc">Votes - High to Low</option>
+            <option value="votes-asc">Votes - Low to High</option>
           </select>
         </form>
       </div>
@@ -71,7 +105,7 @@ const EpisodesTable = ({ episodes, season_statistics }: PropType) => {
             case "seasons":
               return (
                 <SeasonsDisplay
-                  seasons={season_episodes}
+                  seasons={sorted_seasons}
                   season_statistics={season_statistics}
                 />
               );
