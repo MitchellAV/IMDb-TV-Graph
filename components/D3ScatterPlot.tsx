@@ -324,8 +324,8 @@ const D3ScatterPlot = ({ data, season_statistics }: D3ScatterPlotType) => {
         draw_trendline(
           start,
           end,
-          colors[(index + 1) % colors.length]
-          // std_err
+          colors[(index + 1) % colors.length],
+          1.96 * std_err
         );
       }
     });

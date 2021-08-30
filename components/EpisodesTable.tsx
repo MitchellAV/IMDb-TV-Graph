@@ -35,7 +35,11 @@ const EpisodesTable = ({ episodes, season_statistics }: PropType) => {
           <select
             id="display"
             name="display"
-            onChange={(e) => setDisplay(e.currentTarget.value)}
+            onChange={(e) => {
+              setDisplay(e.currentTarget.value);
+              setSeasonSortBy(seasonSortBy);
+              setEpSortBy(epSortBy);
+            }}
           >
             <option value="seasons">Seasons</option>
             <option value="episodes">Episodes</option>
