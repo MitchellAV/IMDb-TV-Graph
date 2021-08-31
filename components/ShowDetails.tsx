@@ -78,6 +78,7 @@ const ShowDetails = ({ show_info, episode_statistics }: PropType) => {
           className="link link--main"
           href={`https://www.imdb.com/title/${id}`}
           target="_blank"
+          rel="noreferrer"
         >
           View on IMDb
         </a>
@@ -125,6 +126,7 @@ const ShowDetails = ({ show_info, episode_statistics }: PropType) => {
               className="link link--show"
               href={`https://www.imdb.com/name/${creator.id}`}
               target="_blank"
+              rel="noreferrer"
               key={creator.id}
             >
               {creator.name}
@@ -140,6 +142,7 @@ const ShowDetails = ({ show_info, episode_statistics }: PropType) => {
                   className="link "
                   href={`https://www.imdb.com/name/${actor.id}`}
                   target="_blank"
+                  rel="noreferrer"
                 >
                   <img
                     className="actor__img"
@@ -153,6 +156,7 @@ const ShowDetails = ({ show_info, episode_statistics }: PropType) => {
                     className="link link--actor"
                     href={`https://www.imdb.com/name/${actor.id}`}
                     target="_blank"
+                    rel="noreferrer"
                   >
                     {actor.name}
                   </a>
@@ -170,6 +174,7 @@ const ShowDetails = ({ show_info, episode_statistics }: PropType) => {
               className="link link--show"
               href={`https://www.imdb.com/search/title/?companies=${company.id}`}
               target="_blank"
+              rel="noreferrer"
               key={company.id}
             >
               {company.name}
@@ -183,6 +188,7 @@ const ShowDetails = ({ show_info, episode_statistics }: PropType) => {
               className="link link--show"
               href={`https://www.imdb.com/search/title/?genres=${genre.value}`}
               target="_blank"
+              rel="noreferrer"
               key={genre.key}
             >
               {genre.value}

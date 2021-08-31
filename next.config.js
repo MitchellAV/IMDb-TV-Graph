@@ -5,4 +5,7 @@ module.exports = {
   },
   target: "serverless",
   reactStrictMode: true,
+  images: {
+    domains: ["image.tmdb.org", "imdb-api.com"],
+  },
 };

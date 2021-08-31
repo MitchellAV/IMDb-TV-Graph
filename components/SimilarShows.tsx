@@ -23,7 +23,7 @@ const SimilarShows = ({ similarShows }: PropType) => {
   const [exists, setExists] = useState<string[]>([]);
 
   useEffect(() => {
-    const fetch_is_show = async () => {
+    const fetch_is_show = async (similarShows: Similar[]) => {
       let promises = [];
       for (let i = 0; i < similarShows.length; i++) {
         const imdb_id = similarShows[i].id;
@@ -33,7 +33,7 @@ const SimilarShows = ({ similarShows }: PropType) => {
       const show_exists = await Promise.all(promises);
       setExists(show_exists);
     };
-    fetch_is_show();
+    fetch_is_show(similarShows);
   }, []);
   return (
     <div className="similar">
