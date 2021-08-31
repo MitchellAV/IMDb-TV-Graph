@@ -65,7 +65,9 @@ const ShowDetails = ({ show_info, episode_statistics }: PropType) => {
 
       return false;
     });
-    char_name_array = remove_as_duplicates(char_name_array);
+    if (char_name_array.length > 0) {
+      char_name_array = remove_as_duplicates(char_name_array);
+    }
     return char_name_array.join(" ");
   };
   return (
