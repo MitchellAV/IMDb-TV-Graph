@@ -1,4 +1,5 @@
 import { D3EpisodeType } from "../types";
+import Image from "next/image";
 
 interface PropType {
   episode: D3EpisodeType;
@@ -19,7 +20,10 @@ const EpisodeDetails = ({ episode }: PropType) => {
   } = episode;
   return (
     <div className="episode">
-      <img className="episode__img" src={image} alt="" />
+      <div className="episode__img">
+        <Image src={image as any} alt={title} layout="fill" objectFit="cover" />
+      </div>
+
       <div className="episode__info">
         <h3 className="episode__detail">
           {seasonNumber} - {episodeNumber}: {title}

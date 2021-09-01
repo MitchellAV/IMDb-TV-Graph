@@ -1,4 +1,5 @@
 import { ResultType } from "../types";
+import Image from "next/image";
 
 interface PropType {
   search_result: ResultType;
@@ -37,11 +38,14 @@ const SearchResult = ({ search_result }: PropType) => {
     >
       <h3 className="search-result__title">{name}</h3>
       {poster_path && (
-        <img
-          className="search-result__img"
-          src={`https://image.tmdb.org/t/p/w500${poster_path}`}
-          alt={name}
-        />
+        <div className="search-result__img">
+          <Image
+            src={`https://image.tmdb.org/t/p/w500${poster_path}` as any}
+            alt={name}
+            layout="fill"
+            objectFit="contain"
+          />
+        </div>
       )}
 
       <p className="search-result__air-date">{start_year ? start_year : ""}</p>

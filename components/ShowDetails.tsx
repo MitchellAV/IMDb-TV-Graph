@@ -1,5 +1,6 @@
 import { IMDBShowInfoType, SeasonStatData } from "../types";
 import ShowStatistics from "./ShowStatistics";
+import Image from "next/image";
 
 interface PropType {
   show_info: IMDBShowInfoType;
@@ -72,7 +73,15 @@ const ShowDetails = ({ show_info, episode_statistics }: PropType) => {
   };
   return (
     <div className="show">
-      <img className="show__img" src={image} alt={title} />
+      <div className="show__img">
+        <Image
+          src={image as any}
+          alt={title}
+          layout="fill"
+          objectFit="contain"
+        />
+      </div>
+
       <div className="show__info">
         <a
           className="link link--main"
@@ -134,7 +143,7 @@ const ShowDetails = ({ show_info, episode_statistics }: PropType) => {
           ))}
         </p>
         <div className="show__attr show__attr--actors">
-          <b>Actors:</b>{" "}
+          <b>Actors:</b>
           <div className="show__actors">
             {actorList.map((actor) => (
               <div className="actor" key={actor.id}>
@@ -144,11 +153,15 @@ const ShowDetails = ({ show_info, episode_statistics }: PropType) => {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  <img
-                    className="actor__img"
-                    src={actor.image}
-                    alt={actor.name}
-                  />
+                  <div className="actor__img">
+                    <Image
+                      src={actor.image as any}
+                      alt={actor.name}
+                      layout="fill"
+                      objectFit="cover"
+                      objectPosition="top"
+                    />
+                  </div>
                 </a>
 
                 <p className="actor__char">

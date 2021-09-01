@@ -1,4 +1,5 @@
 import { Similar } from "../types";
+import Image from "next/image";
 
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -34,7 +35,7 @@ const SimilarShows = ({ similarShows }: PropType) => {
       setExists(show_exists);
     };
     fetch_is_show(similarShows);
-  }, []);
+  }, [similarShows]);
   return (
     <div className="similar">
       {similarShows.map((show, index) => {
@@ -57,7 +58,15 @@ const SimilarShows = ({ similarShows }: PropType) => {
           <>
             {is_show && (
               <div className="similar__show" key={index}>
-                <img className="similar__img" src={image} alt={title} />
+                <div className="similar__img">
+                  <Image
+                    src={image as any}
+                    alt={title}
+                    layout="fill"
+                    objectFit="contain"
+                  />
+                </div>
+
                 <div className="similar__details">
                   <h3 className="similar__title">{title}</h3>
                   <p className="similar__years"> {year}</p>

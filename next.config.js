@@ -4,7 +4,7 @@ module.exports = {
     includePaths: [path.join(__dirname, "styles")],
   },
   target: "serverless",
-  reactStrictMode: true,
+  // reactStrictMode: true,
   images: {
     domains: ["image.tmdb.org", "imdb-api.com"],
   },
