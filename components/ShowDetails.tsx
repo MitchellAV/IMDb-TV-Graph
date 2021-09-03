@@ -1,11 +1,63 @@
 import { IMDBShowInfoType, SeasonStatData } from "../types";
 import ShowStatistics from "./ShowStatistics";
 import Image from "next/image";
+import { min } from "d3-array";
 
 interface PropType {
   show_info: IMDBShowInfoType;
   episode_statistics: SeasonStatData | null;
 }
+
+const format_runtime_string = (
+  minutes_per_ep: number,
+  num_episodes: number
+) => {
+  const mins_total = num_episodes * minutes_per_ep;
+  const years_total = mins_total / 60 / 24 / 7 / (13 / 3) / 12;
+  const years = Math.floor(years_total);
+  const months_total = (years_total - years) * 12;
+  const months = Math.floor(months_total);
+  const weeks_total = (months_total - months) * (13 / 3);
+  const weeks = Math.floor(weeks_total);
+  const days_total = (weeks_total - weeks) * 7;
+  const days = Math.floor(days_total);
+  const hours_total = (days_total - days) * 24;
+  const hours = Math.floor(hours_total);
+  const mins = Math.ceil((hours_total - hours) * 24);
+
+  let string = "";
+  if (years === 1) {
+    string += `${years} year `;
+  } else if (years > 0) {
+    string += `${years} years `;
+  }
+  if (months === 1) {
+    string += `${months} month `;
+  } else if (months > 0) {
+    string += `${months} months `;
+  }
+  if (weeks === 1) {
+    string += `${weeks} week `;
+  } else if (weeks > 0) {
+    string += `${weeks} weeks `;
+  }
+  if (days === 1) {
+    string += `${days} day `;
+  } else if (days > 0) {
+    string += `${days} days `;
+  }
+  if (hours === 1) {
+    string += `${hours} hour `;
+  } else if (hours > 0) {
+    string += `${hours} hours `;
+  }
+  if (mins === 1) {
+    string += `${mins} min `;
+  } else if (mins > 0) {
+    string += `${mins} mins `;
+  }
+  return string;
+};
 
 const ShowDetails = ({ show_info, episode_statistics }: PropType) => {
   const {
@@ -24,6 +76,7 @@ const ShowDetails = ({ show_info, episode_statistics }: PropType) => {
     plot,
     releaseDate,
     runtimeStr,
+    runtimeMins,
     starList,
     title,
     tvSeriesInfo: { creatorList, seasons },
@@ -31,6 +84,13 @@ const ShowDetails = ({ show_info, episode_statistics }: PropType) => {
 
   const num_stars = starList.length;
   const num_seasons = seasons.length;
+  let runtime_length_string = "";
+  if (runtimeMins && episode_statistics) {
+    runtime_length_string = format_runtime_string(
+      parseInt(runtimeMins),
+      episode_statistics.n
+    );
+  }
 
   const remove_as_duplicates = (words: string[]) => {
     if (words.length % 2 == 0) {
@@ -98,11 +158,18 @@ const ShowDetails = ({ show_info, episode_statistics }: PropType) => {
         <p className="show__attr">
           <b>Rating:</b> {imDbRating}/10 ({imDbRatingVotes} votes)
         </p>
-        {/* <p className="show__attr">
-          <b>IMDb Votes:</b> {imDbRatingVotes}
-        </p> */}
+        <p className="show__attr">
+          <b>Release Date:</b> {releaseDate}
+        </p>
+
+        <p className="show__attr">
+          <b>Content Rating:</b> {contentRating}
+        </p>
         <p className="show__attr">
           <b>Languages:</b> {languages}
+        </p>
+        <p className="show__attr">
+          <b>Countries:</b> {countries}
         </p>
         <p className="show__attr">
           <b>Number of Seasons:</b> {num_seasons}
@@ -112,18 +179,16 @@ const ShowDetails = ({ show_info, episode_statistics }: PropType) => {
             <b>Number of Episodes:</b> {episode_statistics.n}
           </p>
         )}
-        <p className="show__attr">
-          <b>Episode Runtime:</b> {runtimeStr}
-        </p>
-        <p className="show__attr">
-          <b>Release Date:</b> {releaseDate}
-        </p>
-        <p className="show__attr">
-          <b>Content Rating:</b> {contentRating}
-        </p>
-        <p className="show__attr">
-          <b>Countries:</b> {countries}
-        </p>
+        {runtimeStr && (
+          <p className="show__attr">
+            <b>Episode Runtime:</b> {runtimeStr}
+          </p>
+        )}
+        {runtime_length_string && (
+          <p className="show__attr">
+            <b>Total Runtime:</b> {runtime_length_string}
+          </p>
+        )}
         <p className="show__attr">
           <b>Synopsis:</b>
           <br /> {plot}
