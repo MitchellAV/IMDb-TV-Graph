@@ -405,12 +405,12 @@ const D3ScatterPlot = ({ data, season_statistics }: D3ScatterPlotType) => {
     season_statistics.forEach((trendline, index) => {
       extra_lines = [];
       if (trendline) {
-        const { start, end, std_err } = trendline;
+        const { start, end, std_err, season_number } = trendline;
 
         const season_lines = draw_trendline(
           start,
           end,
-          colors[(index + 1) % colors.length],
+          colors[season_number % colors.length],
           1.96 * std_err
         );
         extra_lines.push([...season_lines]);
