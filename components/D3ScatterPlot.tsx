@@ -141,6 +141,7 @@ const D3ScatterPlot = ({ data, season_statistics }: D3ScatterPlotType) => {
     let drawXAxis = (g: any, x: any) =>
       g
         .attr("transform", `translate(0,${height - margin.bottom})`)
+        //@ts-ignore
         .call(d3.axisBottom(x).tickFormat(d3.format("d")).ticks(10))
         .call((g: any) => g.select(".domain").remove());
     // Define yAxis using d3.axisLeft(), assigning the scale as `yScale`
