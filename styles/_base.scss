@@ -1,0 +1,39 @@
+@import "modularscale";
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  line-height: 1.5;
+}
+
+p {
+  font-size: 1em;
+}
+h6 {
+  font-size: ms(1);
+}
+h5 {
+  font-size: ms(2);
+}
+h4 {
+  font-size: ms(3);
+}
+h3 {
+  font-size: ms(4);
+}
+h2 {
+  font-size: ms(5);
+}
+h1 {
+  font-size: ms(6);
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}

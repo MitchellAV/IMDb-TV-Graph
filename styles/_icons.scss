@@ -1,0 +1,9 @@
+.icon {
+  display: block;
+  height: 1em;
+  width: 1em;
+  &--star {
+    fill: #c39400;
+    margin-right: 0.2em;
+  }
+}

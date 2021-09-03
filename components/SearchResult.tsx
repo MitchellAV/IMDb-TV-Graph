@@ -27,16 +27,17 @@ const SearchResult = ({ search_result }: PropType) => {
     <a
       className="search-result"
       href={`/show/${id}`}
-      //   style={{
-      //     backgroundImage: backdrop_path
-      //       ? `url(https://image.tmdb.org/t/p/w500${backdrop_path})`
-      //       : "none",
-      //     backgroundRepeat: "no-repeat",
-      //     backgroundSize: "cover",
-      //     backgroundPositionY: "center",
-      //   }}
+      style={{
+        backgroundImage: backdrop_path
+          ? `url(https://image.tmdb.org/t/p/w500${backdrop_path})`
+          : "none",
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "contain",
+        backgroundPosition: "top",
+      }}
     >
       <h3 className="search-result__title">{name}</h3>
+
       {poster_path && (
         <div className="search-result__img">
           <Image

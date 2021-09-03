@@ -1,0 +1,10 @@
+.graph {
+  width: 95%;
+  height: 60vh;
+}
+
+.tick {
+  & line {
+    opacity: 0.2;
+  }
+}
