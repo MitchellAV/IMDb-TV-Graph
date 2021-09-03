@@ -20,9 +20,18 @@ const EpisodeDetails = ({ episode }: PropType) => {
   } = episode;
   return (
     <div className="episode">
-      <div className="episode__img">
-        <Image src={image as any} alt={title} layout="fill" objectFit="cover" />
-      </div>
+      {image ? (
+        <div className="episode__img">
+          <Image
+            src={image as any}
+            alt={title}
+            layout="fill"
+            objectFit="cover"
+          />
+        </div>
+      ) : (
+        <p></p>
+      )}
 
       <div className="episode__info">
         <h3 className="episode__detail">

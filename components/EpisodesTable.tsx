@@ -15,7 +15,7 @@ interface PropType {
 }
 
 const EpisodesTable = ({ episodes, season_statistics }: PropType) => {
-  const [display, setDisplay] = useState("seasons");
+  const [display, setDisplay] = useState("episodes");
   const [epSortBy, setEpSortBy] = useState("ep-asc");
   const [seasonSortBy, setSeasonSortBy] = useState("season-asc");
 
@@ -41,8 +41,8 @@ const EpisodesTable = ({ episodes, season_statistics }: PropType) => {
               setEpSortBy(epSortBy);
             }}
           >
-            <option value="seasons">Seasons</option>
             <option value="episodes">Episodes</option>
+            <option value="seasons">Seasons</option>
           </select>
           {display === "seasons" && (
             <>

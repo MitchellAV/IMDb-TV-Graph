@@ -12,6 +12,7 @@ import {
   calculate_statistics_for_seasons,
   format_episodes_d3_scatter,
 } from "../../util/statistics";
+import SearchForm from "../../components/SearchForm";
 
 interface ShowProps {
   show: ShowWithSeasonInfoType;
@@ -30,6 +31,7 @@ const Show = ({ show }: ShowProps) => {
     seasons,
     episodes_info
   );
+  const rated_episodes = episodes_info.filter((ep) => ep.imDbRating !== 0);
   console.log(episode_statistics);
 
   return (
@@ -42,12 +44,14 @@ const Show = ({ show }: ShowProps) => {
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
         ></link>
       </Head>
+      <SearchForm />
       <h1 className="main__title">{title}</h1>
-
-      <D3ScatterPlot
-        data={episodes_info}
-        season_statistics={season_statistics}
-      />
+      {rated_episodes.length > 0 && (
+        <D3ScatterPlot
+          data={episodes_info}
+          season_statistics={season_statistics}
+        />
+      )}
       <ShowDetails
         show_info={show_info}
         episode_statistics={episode_statistics}

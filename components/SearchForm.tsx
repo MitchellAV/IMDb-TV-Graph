@@ -10,6 +10,7 @@ const SearchForm = () => {
 
   const fetchSearchResults = async (searchTerm: string) => {
     if (searchTerm === "") return setSearchResults([]);
+    if (searchTerm.length < 3) return setSearchResults([]);
     try {
       const URI = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/search/${searchTerm}`;
       const res = await axios.get(URI);

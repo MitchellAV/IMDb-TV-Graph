@@ -95,6 +95,7 @@ export const calculate_statistics = (
     return seasonStatData;
   }
   return null;
+  // throw new Error("Only one Episode");
 };
 
 export const calculate_statistics_for_episodes = (

@@ -5,10 +5,17 @@ import { D3EpisodeType, SeasonStatData } from "../types";
 
 interface D3ScatterPlotType {
   data: D3EpisodeType[];
-  season_statistics: (SeasonStatData | null)[];
+  season_statistics: SeasonStatData[];
 }
 
 const D3ScatterPlot = ({ data, season_statistics }: D3ScatterPlotType) => {
+  data = data
+    .filter((ep) => ep.imDbRating !== 0)
+    .sort((a, b) => a.true_ep_count - b.true_ep_count);
+  season_statistics = season_statistics.sort((a, b) => {
+    return a.season_number - b.season_number;
+  });
+
   const useRefDimensions = (ref: RefObject<any>) => {
     const [dimensions, setDimensions] = useState({ width: 1, height: 2 });
 
