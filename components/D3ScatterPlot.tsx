@@ -107,7 +107,7 @@ const D3ScatterPlot = ({ data, season_statistics }: D3ScatterPlotType) => {
     //   .axisBottom(xScale)
     //   .tickFormat(null)
     //   .tickSize(-drawHeight);
-    const yAxisGrid = d3.axisLeft(yScale).tickFormat(null).tickSize(-drawWidth);
+
     // svg
     //   .append("g")
     //   .attr("class", "x axis-grid")
@@ -120,6 +120,10 @@ const D3ScatterPlot = ({ data, season_statistics }: D3ScatterPlotType) => {
       .attr("class", "D3-graph")
       .attr("viewBox", `0 0 ${width} ${height}`);
 
+    // const drawGrid = (g: any) => {
+    //   g.axisLeft(yScale).tickFormat(null).tickSize(-drawWidth);
+    // };
+
     // svg
     //   .append("g")
     //   .attr("class", "y axis-grid")
@@ -130,58 +134,83 @@ const D3ScatterPlot = ({ data, season_statistics }: D3ScatterPlotType) => {
     //   .call((g: any) => g.selectAll("text").remove());
 
     // Define xAxis using d3.axisBottom, assigning the scale as `xScale`
-    let xAxis = (g: any) =>
+    const yAxisGrid = svg.append("g");
+
+    const xAxis = svg.append("g");
+    const yAxis = svg.append("g");
+    let drawXAxis = (g: any, x: any) =>
       g
         .attr("transform", `translate(0,${height - margin.bottom})`)
-        .call(d3.axisBottom(xScale).tickFormat(d3.format("d")).ticks(10))
+        .call(d3.axisBottom(x).tickFormat(d3.format("d")).ticks(10))
         .call((g: any) => g.select(".domain").remove());
     // Define yAxis using d3.axisLeft(), assigning the scale as `yScale`
-    let yAxis = (g: any) =>
+    let drawYAxis = (g: any, y: any) =>
       g
         .attr("transform", `translate(${margin.left},0)`)
-        .call(d3.axisLeft(yScale).ticks(10).tickSize(-drawWidth))
+        .call(d3.axisLeft(y).ticks(null).tickSize(-drawWidth))
         .call((g: any) => g.select(".domain").remove());
 
     /////////////////////////////
 
     // Append a `g` to the `svg` as an x axis label, specifying the 'transform' attribute to position it
     // Use the `.call` method to render the axis in the `g`
-    let xAxisLabel = svg
-      .append("g")
-      .attr(
-        "transform",
-        "translate(" + margin.left + "," + (drawHeight + margin.top) + ")"
-      )
-      .attr("class", "axis")
-      .call(xAxis);
+    // xAxis
+    //   .attr(
+    //     "transform",
+    //     "translate(" + margin.left + "," + (drawHeight + margin.top) + ")"
+    //   )
+    //   .attr("class", "axis")
+    //   .call(drawXAxis);
 
     // Append a `g` to the `svg` as a y axis label, specifying the 'transform' attribute to position it
     // Use the `.call` method to render the axis in the `g`
-    let yAxisLabel = svg
-      .append("g")
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-      .attr("class", "axis")
-      .call(yAxis);
+    // yAxis
+    //   .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+    //   .attr("class", "axis")
+    //   .call(drawYAxis);
 
     // Append a text element to the svg to label the x axis
     let xAxisText = svg
       .append("text")
-      .attr(
-        "transform",
-        `translate(${drawWidth / 2 - 20}, ${height - margin.bottom + 40})`
-      )
-      .attr("class", "axis-label")
+      // .attr(
+      //   "transform",
+      //   `translate(${drawWidth / 2 - 20}, ${height - margin.bottom + 40})`
+      // )
+      .attr("id", "x-axis")
+      .attr("class", "axis axis__label--x")
       .text(xLabel);
+
+    const x_label_el = document.getElementById("x-axis");
+    if (x_label_el) {
+      const { width: x_label_width, height: x_label_height } =
+        x_label_el.getBoundingClientRect();
+      xAxisText.attr(
+        "transform",
+        `translate( ${width / 2 - x_label_width / 2},${
+          height - x_label_height / 2
+        })`
+      );
+    }
 
     // Append a text element to the svg to label the y axis
     let yAxisText = svg
       .append("text")
-      .attr(
-        "transform",
-        `translate( ${margin.left - 30},${drawHeight / 2}) rotate(-90)`
-      )
-      .attr("class", "axis-label")
+      .attr("id", "y-axis")
+
+      .attr("class", "axis axis__label--y")
       .text(yLabel);
+
+    const y_label_el = document.getElementById("y-axis");
+    if (y_label_el) {
+      const { width: y_label_width, height: y_label_height } =
+        y_label_el.getBoundingClientRect();
+      yAxisText.attr(
+        "transform",
+        `translate( ${y_label_height},${
+          height / 2 + y_label_width / 2
+        }) rotate(-90)`
+      );
+    }
 
     let tooltip = d3
       .select("#tv-show-graph")
@@ -201,8 +230,6 @@ const D3ScatterPlot = ({ data, season_statistics }: D3ScatterPlotType) => {
     // A function that change this tooltip when the user hover a point.
     // Its opacity is set to 1: we can now see it. Plus it set the text and position of tooltip depending on the datapoint (d)
     let mouseover = function (e: MouseEvent, d: D3EpisodeType) {
-      console.log("hover");
-
       tooltip.style("opacity", 1).style("display", "block");
       tooltip
         .html(
@@ -230,15 +257,23 @@ const D3ScatterPlot = ({ data, season_statistics }: D3ScatterPlotType) => {
     // Select all circles and bind data to the selection
 
     // Create the scatter variable: where both the circles and the brush take place
-    const data_points = svg.append("g").attr("clip-path", "url(#clip)");
-    data_points
+    const chart_area = svg
+      .append("defs")
+      .append("SVG:clipPath")
+      .attr("id", "clip-path")
+      .append("rect")
+      .attr("x", margin.left)
+      .attr("y", margin.top)
+      .attr("height", drawHeight)
+      .attr("width", drawWidth);
+    const drawArea = svg.append("g").attr("clip-path", "url(#clip-path)");
+    const line = drawArea
       .append("path")
       .datum(data)
       .attr("fill", "none")
       .attr("stroke-opacity", 0.5)
       .attr("stroke", "black")
       .attr("stroke-width", 1.5)
-
       .attr(
         "d",
         // @ts-ignore
@@ -255,7 +290,7 @@ const D3ScatterPlot = ({ data, season_statistics }: D3ScatterPlotType) => {
             return yScale(d.imDbRating);
           })
       );
-    data_points
+    const scatter = drawArea
       .append("g")
       .attr("stroke", "#000")
       .attr("stroke-opacity", 0.2)
@@ -273,18 +308,54 @@ const D3ScatterPlot = ({ data, season_statistics }: D3ScatterPlotType) => {
         window.open(`https://www.imdb.com/title/${d.id}`, "_blank");
       });
 
-    // const zoom = d3.zoom().scaleExtent([0.5, 32]).on("zoom", zoomed);
+    let extra_lines: d3.Selection<
+      SVGLineElement,
+      unknown,
+      HTMLElement,
+      any
+    >[][] = [];
 
-    // svg.call(zoom).call(zoom.transform, d3.zoomIdentity);
+    svg.on("dblclick", function () {
+      svg
+        .transition()
+        .duration(750)
+        .call(zoom.transform as any, d3.zoomIdentity);
+    });
 
-    // function zoomed({ transform }) {
-    //   const zx = transform.rescaleX(x).interpolate(d3.interpolateRound);
-    //   const zy = transform.rescaleY(y).interpolate(d3.interpolateRound);
-    //   gDot.attr("transform", transform).attr("stroke-width", 5 / transform.k);
-    //   gx.call(xAxis, zx);
-    //   gy.call(yAxis, zy);
-    //   gGrid.call(grid, zx, zy);
-    // }
+    function zoomed({ transform }: any) {
+      const zx = transform.rescaleX(xScale);
+      const zy = transform.rescaleY(yScale);
+      // console.log(transform);
+
+      drawArea
+        .selectAll("circle")
+        .attr("transform", transform)
+        .attr("r", radius / transform.k);
+      line.attr(
+        "d",
+        // @ts-ignore
+        d3
+          .line()
+          // @ts-ignore
+
+          .x((d: D3EpisodeType) => {
+            return zx(d.true_ep_count);
+          })
+          // @ts-ignore
+
+          .y((d: D3EpisodeType) => {
+            return zy(d.imDbRating);
+          })
+      );
+
+      const x = drawArea.selectAll("line").attr("transform", transform);
+      // @ts-ignore
+
+      xAxis.call(drawXAxis, zx);
+      yAxis.call(drawYAxis, zy);
+      // yAxisGrid.call(drawGrid, zx, zy);
+    }
+
     const draw_trendline = (
       start: {
         x: number;
@@ -297,9 +368,10 @@ const D3ScatterPlot = ({ data, season_statistics }: D3ScatterPlotType) => {
       color: string,
       std_err?: number
     ) => {
+      const lines = [];
       if (std_err) {
         const sigma95 = std_err;
-        svg
+        const upper = drawArea
           .append("line") // attach a line
           .attr("stroke", color)
           .style("stroke-dasharray", "3, 3")
@@ -307,7 +379,8 @@ const D3ScatterPlot = ({ data, season_statistics }: D3ScatterPlotType) => {
           .attr("y1", (d) => yScale(start.y + sigma95)) // y position of the first end of the line
           .attr("x2", (d) => xScale(end.x)) // x position of the second end of the line
           .attr("y2", (d) => yScale(end.y + sigma95));
-        svg
+        lines.push(upper);
+        const lower = drawArea
           .append("line") // attach a line
           .attr("stroke", color)
           .style("stroke-dasharray", "3, 3")
@@ -315,69 +388,47 @@ const D3ScatterPlot = ({ data, season_statistics }: D3ScatterPlotType) => {
           .attr("y1", (d) => yScale(start.y - sigma95)) // y position of the first end of the line
           .attr("x2", (d) => xScale(end.x)) // x position of the second end of the line
           .attr("y2", (d) => yScale(end.y - sigma95));
+        lines.push(lower);
       }
-      svg
+      const middle = drawArea
         .append("line") // attach a line
         .attr("stroke", color)
         .attr("x1", (d) => xScale(start.x)) // x position of the first end of the line
         .attr("y1", (d) => yScale(start.y)) // y position of the first end of the line
         .attr("x2", (d) => xScale(end.x)) // x position of the second end of the line
         .attr("y2", (d) => yScale(end.y));
+      lines.push(middle);
+
+      return lines;
     };
     season_statistics.forEach((trendline, index) => {
+      extra_lines = [];
       if (trendline) {
         const { start, end, std_err } = trendline;
 
-        draw_trendline(
+        const season_lines = draw_trendline(
           start,
           end,
           colors[(index + 1) % colors.length],
           1.96 * std_err
         );
+        extra_lines.push([...season_lines]);
       }
     });
 
-    // Use the .exit() and .remove() methods to remove elements that are no longer in the data
-    // circles.exit().remove();
+    const zoom = d3
+      .zoom()
+      .translateExtent([
+        [-width * 0.5, -height * 0.5],
+        [width * 1.5, height * 1.5],
+      ])
+      .scaleExtent([1, 10])
+      .on("zoom", zoomed);
 
-    // Add hovers using the d3-tip library
-    // chartG.call(tip);
-    // Set the zoom and Pan features: how much you can zoom, on which part, and what to do when there is a zoom
-    // var zoom = d3
-    //   .zoom()
-    //   .scaleExtent([0.5, 20]) // This control how much you can unzoom (x0.5) and zoom (x20)
-    //   .extent([
-    //     [0, 0],
-    //     [drawWidth, drawHeight],
-    //   ])
-    //   .on("zoom", updateChart);
-
-    // // This add an invisible rect on top of the chart area. This rect can recover pointer events: necessary to understand when the user zoom
-    // svg
-    //   // .append("rect")
-    //   // .attr("width", width)
-    //   // .attr("height", height)
-    //   // .style("fill", "none")
-    //   // .style("pointer-events", "all")
-    //   // .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-    //   .call(zoom);
-    // // now the user can zoom and it will trigger the function called updateChart
-
-    // // A function that updates the chart when the user zoom and thus new boundaries are available
-    // function updateChart(e: any) {
-    //   // recover the new scale
-    //   var newX = e.transform.rescaleX(xScale);
-    //   var newY = e.transform.rescaleY(yScale);
-
-    //   // update axes with these new boundaries
-    //   // xAxis((g: any) => g.axisBottom(newX));
-    //   // yAxis((g: any) => g.axisLeft(newY));
-
-    //   // update circle position
-    //   scatter.attr("transform", e.transform);
-    //   // svg.call(xAxis, newX);
-    //   // svg.call(yAxis, newY);
-    // }
+    svg
+      .call(zoom as any)
+      .call(zoom.transform as any, d3.zoomIdentity)
+      .on("dblclick.zoom", null);
   };
 
   return <div id="tv-show-graph" className="graph" ref={graphRef}></div>;
