@@ -2,17 +2,14 @@ import { IMDBShowInfoType, SeasonStatData } from "../types";
 import ShowStatistics from "./ShowStatistics";
 import Image from "next/image";
 import { min } from "d3-array";
+import { useState } from "react";
 
 interface PropType {
   show_info: IMDBShowInfoType;
   episode_statistics: SeasonStatData | null;
 }
 
-const format_runtime_string = (
-  minutes_per_ep: number,
-  num_episodes: number
-) => {
-  const mins_total = num_episodes * minutes_per_ep;
+const format_runtime_string = (mins_total: number) => {
   const years_total = mins_total / 60 / 24 / 7 / (13 / 3) / 12;
   const years = Math.floor(years_total);
   const months_total = (years_total - years) * 12;
@@ -85,12 +82,13 @@ const ShowDetails = ({ show_info, episode_statistics }: PropType) => {
   const num_stars = starList.length;
   const num_seasons = seasons.length;
   let runtime_length_string = "";
+  let total_runtime_mins = 0;
   if (runtimeMins && episode_statistics) {
-    runtime_length_string = format_runtime_string(
-      parseInt(runtimeMins),
-      episode_statistics.n
-    );
+    total_runtime_mins = parseInt(runtimeMins) * episode_statistics.n;
+    runtime_length_string = format_runtime_string(total_runtime_mins);
   }
+
+  const [hours, setHours] = useState(0);
 
   const remove_as_duplicates = (words: string[]) => {
     if (words.length % 2 == 0) {
@@ -189,6 +187,23 @@ const ShowDetails = ({ show_info, episode_statistics }: PropType) => {
             <b>Total Runtime:</b> {runtime_length_string}
           </p>
         )}
+        <div className="show__attr">
+          <label htmlFor="time">
+            How many hours of free time do you have per day?
+          </label>
+          <input
+            id="time"
+            name="time"
+            type="number"
+            onChange={(e) => {
+              let value = parseInt(e.currentTarget.value);
+              if (!isNaN(value)) {
+                setHours(value);
+              }
+            }}
+          ></input>
+          <p>{Math.ceil(total_runtime_mins / (hours * 60))} days</p>
+        </div>
         <p className="show__attr">
           <b>Synopsis:</b>
           <br /> {plot}
