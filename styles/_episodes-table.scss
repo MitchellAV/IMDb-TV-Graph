@@ -1,19 +1,20 @@
+@import "mixins";
 @import "variables";
 @import "modularscale";
 
 .table {
   display: flex;
   flex-direction: column;
-  width: 100%;
-
-  background: $clr-background-light;
+  width: min(100%, 60em);
 
   &__filters {
     display: flex;
     flex-direction: column;
     padding: 1em;
 
+    border-top: 1px solid $clr-black;
     border-bottom: 1px solid $clr-black;
+    background: $clr-white;
   }
   &__label {
     font-size: ms(2);
@@ -25,8 +26,9 @@
   &__container {
     display: flex;
     flex-direction: column;
+    background: $clr-white;
 
-    margin: 1em;
+    padding: 1em;
   }
 }
 
@@ -34,17 +36,17 @@
   display: flex;
   flex-direction: column;
 
-  @media only screen and (min-width: 768px) {
-    display: grid;
-    grid-template-columns: 1fr 3fr;
-    gap: 1em;
-  }
   width: 100%;
   outline: 2px solid $clr-black;
   padding: 1em;
 
-  background-color: $clr-white;
+  background: $clr-background-light;
 
+  @include responsive(Tablet) {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 1em;
+  }
   &__img {
     align-self: center;
     justify-self: center;
@@ -62,6 +64,7 @@
   }
 
   &__detail {
+    width: min(100%, 75ch);
     text-align: center;
     &--plot {
       text-align: left;
@@ -77,5 +80,9 @@
   flex-direction: column;
 
   width: 100%;
-  border-bottom: 3px solid black;
+  border-bottom: 2px solid black;
+
+  &__stats {
+    margin: 1em 0;
+  }
 }

@@ -19,18 +19,16 @@ const EpisodeDetails = ({ episode }: PropType) => {
     year,
   } = episode;
   return (
-    <div className="episode">
-      {image ? (
-        <div className="episode__img">
+    <div className="episode" id={`${seasonNumber}-${episodeNumber}`}>
+      {image && (
+        <a className="episode__img" href={`https://www.imdb.com/title/${id}`}>
           <Image
             src={image as any}
             alt={title}
             layout="fill"
             objectFit="cover"
           />
-        </div>
-      ) : (
-        <p></p>
+        </a>
       )}
 
       <div className="episode__info">

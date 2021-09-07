@@ -39,10 +39,8 @@ const ShowStatistics = ({ episode_statistics }: PropType) => {
   };
   return (
     <div className="show__statistics">
-      <h3 className="show__header">Statistics:</h3>
-
       <div className="show__attr--table">
-        <h3>Episode Ratings</h3>
+        <h3 className="show__header">Episode Ratings</h3>
         <table className="rating-table">
           <thead>
             <tr className="rating-table__row">
@@ -85,7 +83,7 @@ const ShowStatistics = ({ episode_statistics }: PropType) => {
       </p>
 
       <p className="show__attr">
-        <b>Trendline Direction</b>: {m.toPrecision(2)} - {trend_to_words(m)}
+        <b>Trendline Direction</b>: {m.toPrecision(2)} {trend_to_words(m)}
       </p>
     </div>
   );

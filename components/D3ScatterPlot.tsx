@@ -306,7 +306,9 @@ const D3ScatterPlot = ({ data, season_statistics }: D3ScatterPlotType) => {
       // .on("mousemove", mousemove)
       .on("mouseleave", mouseleave)
       .on("click", (e, d) => {
-        window.open(`https://www.imdb.com/title/${d.id}`, "_blank");
+        document
+          .getElementById(`${d.seasonNumber}-${d.episodeNumber}`)
+          ?.scrollIntoView();
       });
 
     let extra_lines: d3.Selection<
