@@ -208,7 +208,7 @@ const D3ScatterPlot = ({ data, season_statistics }: D3ScatterPlotType) => {
       yAxisText.attr(
         "transform",
         `translate( ${y_label_height},${
-          height / 2 + y_label_width / 2
+          drawHeight / 2 + y_label_width / 2
         }) rotate(-90)`
       );
     }

@@ -131,6 +131,7 @@ const ShowDetails = ({ show_info, episode_statistics }: PropType) => {
   };
   return (
     <div className="show">
+      <h1 className="show__title">{title}</h1>
       <div className="show__img">
         <Image
           src={image as any}
@@ -149,7 +150,6 @@ const ShowDetails = ({ show_info, episode_statistics }: PropType) => {
         >
           View on IMDb
         </a>
-        <p className="show__title">{title}</p>
         <p className="show__attr">
           <b>Full Title:</b> {fullTitle}
         </p>
@@ -169,6 +169,11 @@ const ShowDetails = ({ show_info, episode_statistics }: PropType) => {
         <p className="show__attr">
           <b>Countries:</b> {countries}
         </p>
+
+        <p className="show__attr">
+          <b>Synopsis:</b>
+          <br /> {plot}
+        </p>
         <p className="show__attr">
           <b>Number of Seasons:</b> {num_seasons}
         </p>
@@ -187,27 +192,30 @@ const ShowDetails = ({ show_info, episode_statistics }: PropType) => {
             <b>Total Runtime:</b> {runtime_length_string}
           </p>
         )}
-        <div className="show__attr">
-          <label htmlFor="time">
+        <div className="show__attr time">
+          <label className="time__item time__item--label" htmlFor="time">
             How many hours of free time do you have per day?
           </label>
-          <input
-            id="time"
-            name="time"
-            type="number"
-            onChange={(e) => {
-              let value = parseInt(e.currentTarget.value);
-              if (!isNaN(value)) {
+          <div className="time__container">
+            <input
+              className="time__item time__item--input"
+              id="time"
+              name="time"
+              type="number"
+              onChange={(e) => {
+                let value = parseInt(e.currentTarget.value);
                 setHours(value);
-              }
-            }}
-          ></input>
-          <p>{Math.ceil(total_runtime_mins / (hours * 60))} days</p>
+              }}
+            ></input>
+            <span className="time__item"> Hour(s) / day</span>
+          </div>
+          {hours > 0 && (
+            <p className="time__item">
+              It will take {Math.ceil(total_runtime_mins / (hours * 60))} day(s)
+              to finish the entire show
+            </p>
+          )}
         </div>
-        <p className="show__attr">
-          <b>Synopsis:</b>
-          <br /> {plot}
-        </p>
         <p className="show__attr">
           <b>Creators:</b>{" "}
           {creatorList.map((creator) => (

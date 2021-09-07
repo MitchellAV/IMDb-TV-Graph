@@ -57,9 +57,7 @@ const EpisodeDetails = ({ episode }: PropType) => {
           </span>
         </div>
         <p className="episode__detail">Released: {released}</p>
-        <p className="episode__detail"></p>
-
-        <p className="episode__detail">{plot}</p>
+        <p className="episode__detail episode__detail--plot">{plot}</p>
       </div>
     </div>
   );

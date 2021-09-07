@@ -1,0 +1,14 @@
+@import "variables";
+@import "modularscale";
+.main {
+  &__title {
+    text-align: center;
+    margin-bottom: 0;
+  }
+  &__header {
+    width: 100%;
+    text-align: center;
+    background: $clr-background-dark;
+    color: $clr-text-light;
+  }
+}

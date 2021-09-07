@@ -52,9 +52,7 @@ const ShowStatistics = ({ episode_statistics }: PropType) => {
               <th className="rating-table__data  rating-table__data--header">
                 Average
               </th>
-              <th className="rating-table__data  rating-table__data--header">
-                Median
-              </th>
+
               <th className="rating-table__data  rating-table__data--header">
                 Highest
               </th>
@@ -64,7 +62,7 @@ const ShowStatistics = ({ episode_statistics }: PropType) => {
             <tr className="rating-table__row">
               <td className="rating-table__data"> {low_rating}</td>
               <td className="rating-table__data">{mean_y.toFixed(1)}</td>
-              <td className="rating-table__data">{median_y.toFixed(1)}</td>
+
               <td className="rating-table__data">{high_rating}</td>
             </tr>
           </tbody>
@@ -85,17 +83,9 @@ const ShowStatistics = ({ episode_statistics }: PropType) => {
       <p className="show__attr">
         <b>Standard Error of Regression</b>: ±{std_err.toFixed(2)} Rating Points
       </p>
-      {/* <p className="show__attr">
-        <b>Sample Correlation</b>: {s_corr.toFixed(2)}
-      </p>
+
       <p className="show__attr">
-        <b>Sample Covariance</b>: {s_cov.toFixed(2)}
-      </p> */}
-      {/* <p className="show__attr">
-        <b>Variance</b>: {variance_y.toFixed(2)}
-      </p> */}
-      <p className="show__attr">
-        <b>Trendline Direction</b>: {m.toFixed(2)} - {trend_to_words(m)}
+        <b>Trendline Direction</b>: {m.toPrecision(2)} - {trend_to_words(m)}
       </p>
     </div>
   );

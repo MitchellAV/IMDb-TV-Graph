@@ -1,7 +1,27 @@
+@import "variables";
+@import "modularscale";
+
 .table {
   display: flex;
   flex-direction: column;
   width: 100%;
+
+  background: $clr-background-light;
+
+  &__filters {
+    display: flex;
+    flex-direction: column;
+    padding: 1em;
+
+    border-bottom: 1px solid $clr-black;
+  }
+  &__label {
+    font-size: ms(2);
+  }
+  &__select {
+    margin-bottom: 0.2em;
+  }
+
   &__container {
     display: flex;
     flex-direction: column;
@@ -11,31 +31,41 @@
 }
 
 .episode {
-  display: grid;
-  grid-template-columns: 1fr 3fr;
-  width: 100%;
-  outline: 2px solid black;
-  gap: 1em;
-  padding: 0.6em;
+  display: flex;
+  flex-direction: column;
 
-  background-color: #f6f6f5;
+  @media only screen and (min-width: 768px) {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    gap: 1em;
+  }
+  width: 100%;
+  outline: 2px solid $clr-black;
+  padding: 1em;
+
+  background-color: $clr-white;
 
   &__img {
     align-self: center;
     justify-self: center;
     position: relative;
     width: 100%;
-    height: 100%;
+    height: 10em;
+    margin-bottom: 0.6em;
   }
 
   &__info {
-    justify-self: start;
-    align-self: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
 
   &__detail {
-    display: flex;
-    align-items: center;
+    text-align: center;
+    &--plot {
+      text-align: left;
+    }
   }
   &__span {
     display: inline-block;

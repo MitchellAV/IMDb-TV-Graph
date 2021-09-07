@@ -29,72 +29,78 @@ const EpisodesTable = ({ episodes, season_statistics }: PropType) => {
 
   return (
     <div className="table">
-      <div className="table__filters">
-        <form className="table__filter">
-          <label htmlFor="display">Display:</label>
-          <select
-            id="display"
-            name="display"
-            onChange={(e) => {
-              setDisplay(e.currentTarget.value);
-              setSeasonSortBy(seasonSortBy);
-              setEpSortBy(epSortBy);
-            }}
-          >
-            <option value="episodes">Episodes</option>
-            <option value="seasons">Seasons</option>
-          </select>
-          {display === "seasons" && (
-            <>
-              <label htmlFor="season_sort">Sort Season By:</label>
-              <select
-                id="season_sort"
-                name="season_sort"
-                onChange={(e) => setSeasonSortBy(e.currentTarget.value)}
-              >
-                <option value="season-asc">Season - Oldest</option>
-                <option value="season-desc">Season - Latest</option>
-                <option value="avg-rating-desc">
-                  Average Rating - Highest
-                </option>
-                <option value="avg-rating-asc">Average Rating - Lowest</option>
-                <option value="median-desc">Median - Highest</option>
-                <option value="median-asc">Median - Lowest</option>
-                <option value="slope-desc">
-                  Trendline Direction - Most Positive
-                </option>
-                <option value="slope-asc">
-                  Trendline Direction - Most Negative
-                </option>
-                <option value="std-asc">Standard Deviation - Lowest</option>
-                <option value="std-desc">Standard Deviation - Highest</option>
-                <option value="r2-desc">R-Squared - Highest</option>
-                <option value="r2-asc">R-Squared - Lowest</option>
-                <option value="std-err-asc">
-                  Standard Error of Regression - Lowest
-                </option>
-                <option value="std-err-desc">
-                  Standard Error of Regression - Highest
-                </option>
-              </select>
-            </>
-          )}
+      <form className="table__filters">
+        <label className="table__label" htmlFor="display">
+          Display:
+        </label>
+        <select
+          className="table__select"
+          id="display"
+          name="display"
+          onChange={(e) => {
+            setDisplay(e.currentTarget.value);
+            setSeasonSortBy(seasonSortBy);
+            setEpSortBy(epSortBy);
+          }}
+        >
+          <option value="episodes">Episodes</option>
+          <option value="seasons">Seasons</option>
+        </select>
+        {display === "seasons" && (
+          <>
+            <label className="table__label" htmlFor="season_sort">
+              Sort Season By:
+            </label>
+            <select
+              className="table__select"
+              id="season_sort"
+              name="season_sort"
+              onChange={(e) => setSeasonSortBy(e.currentTarget.value)}
+            >
+              <option value="season-asc">Season - Oldest</option>
+              <option value="season-desc">Season - Latest</option>
+              <option value="avg-rating-desc">Average Rating - Highest</option>
+              <option value="avg-rating-asc">Average Rating - Lowest</option>
+              <option value="median-desc">Median - Highest</option>
+              <option value="median-asc">Median - Lowest</option>
+              <option value="slope-desc">
+                Trendline Direction - Most Positive
+              </option>
+              <option value="slope-asc">
+                Trendline Direction - Most Negative
+              </option>
+              <option value="std-asc">Standard Deviation - Lowest</option>
+              <option value="std-desc">Standard Deviation - Highest</option>
+              <option value="r2-desc">R-Squared - Highest</option>
+              <option value="r2-asc">R-Squared - Lowest</option>
+              <option value="std-err-asc">
+                Standard Error of Regression - Lowest
+              </option>
+              <option value="std-err-desc">
+                Standard Error of Regression - Highest
+              </option>
+            </select>
+          </>
+        )}
 
-          <label htmlFor="ep_sort">Sort Episodes By:</label>
-          <select
-            id="ep_sort"
-            name="ep_sort"
-            onChange={(e) => setEpSortBy(e.currentTarget.value)}
-          >
-            <option value="ep-asc">Episode - Oldest </option>
-            <option value="ep-desc">Episode - Latest</option>
-            <option value="rating-desc">Rating - Highest</option>
-            <option value="rating-asc">Rating - Lowest</option>
-            <option value="votes-desc">Votes - Highest</option>
-            <option value="votes-asc">Votes - Lowest</option>
-          </select>
-        </form>
-      </div>
+        <label className="table__label" htmlFor="ep_sort">
+          Sort Episodes By:
+        </label>
+        <select
+          className="table__select"
+          id="ep_sort"
+          name="ep_sort"
+          onChange={(e) => setEpSortBy(e.currentTarget.value)}
+        >
+          <option value="ep-asc">Episode - Oldest </option>
+          <option value="ep-desc">Episode - Latest</option>
+          <option value="rating-desc">Rating - Highest</option>
+          <option value="rating-asc">Rating - Lowest</option>
+          <option value="votes-desc">Votes - Highest</option>
+          <option value="votes-asc">Votes - Lowest</option>
+        </select>
+      </form>
+
       <div className="table__container">
         {(() => {
           switch (display) {
