@@ -150,25 +150,36 @@ const ShowDetails = ({ show_info, episode_statistics }: PropType) => {
         >
           View on IMDb
         </a>
-        <p className="show__attr">
-          <b>Full Title:</b> {fullTitle}
-        </p>
+        {fullTitle && (
+          <p className="show__attr">
+            <b>Full Title:</b> {fullTitle}
+          </p>
+        )}
+
         <p className="show__attr">
           <b>Rating:</b> {imDbRating}/10 ({imDbRatingVotes} votes)
         </p>
-        <p className="show__attr">
-          <b>Release Date:</b> {releaseDate}
-        </p>
+        {releaseDate && (
+          <p className="show__attr">
+            <b>Release Date:</b> {releaseDate}
+          </p>
+        )}
 
-        <p className="show__attr">
-          <b>Content Rating:</b> {contentRating}
-        </p>
-        <p className="show__attr">
-          <b>Languages:</b> {languages}
-        </p>
-        <p className="show__attr">
-          <b>Countries:</b> {countries}
-        </p>
+        {contentRating && (
+          <p className="show__attr">
+            <b>Content Rating:</b> {contentRating}
+          </p>
+        )}
+        {languages && (
+          <p className="show__attr">
+            <b>Languages:</b> {languages}
+          </p>
+        )}
+        {countries && (
+          <p className="show__attr">
+            <b>Countries:</b> {countries}
+          </p>
+        )}
 
         <p className="show__attr">
           <b>Synopsis:</b>
@@ -224,7 +235,12 @@ const ShowDetails = ({ show_info, episode_statistics }: PropType) => {
                       alt={actor.name}
                       layout="fill"
                       objectFit="cover"
-                      objectPosition="top"
+                      objectPosition={
+                        actor.image ==
+                        "https://imdb-api.com/images/original/nopicture.jpg"
+                          ? "center"
+                          : "top"
+                      }
                     />
                   </div>
                 </a>
@@ -246,7 +262,7 @@ const ShowDetails = ({ show_info, episode_statistics }: PropType) => {
           </div>
         </div>
         <p className="show__attr">
-          <b>Companies:</b>{" "}
+          <b>Companies:</b>
           {companyList.map((company) => (
             <a
               className="link link--show"
@@ -260,7 +276,7 @@ const ShowDetails = ({ show_info, episode_statistics }: PropType) => {
           ))}
         </p>
         <p className="show__attr">
-          <b>Genres:</b>{" "}
+          <b>Genres:</b>
           {genreList.map((genre) => (
             <a
               className="link link--show"
@@ -277,30 +293,32 @@ const ShowDetails = ({ show_info, episode_statistics }: PropType) => {
         {episode_statistics && (
           <ShowStatistics episode_statistics={episode_statistics} />
         )}
-        <div className="show__attr time">
-          <label className="time__item time__item--label" htmlFor="time">
-            How many hours of free time do you have per day?
-          </label>
-          <div className="time__container">
-            <input
-              className="time__item time__item--input"
-              id="time"
-              name="time"
-              type="number"
-              onChange={(e) => {
-                let value = parseInt(e.currentTarget.value);
-                setHours(value);
-              }}
-            ></input>
-            <span className="time__item"> Hour(s) / day</span>
+        {runtimeStr && (
+          <div className="show__attr time">
+            <label className="time__item time__item--label" htmlFor="time">
+              How many hours of free time do you have per day?
+            </label>
+            <div className="time__container">
+              <input
+                className="time__item time__item--input"
+                id="time"
+                name="time"
+                type="number"
+                onChange={(e) => {
+                  let value = parseInt(e.currentTarget.value);
+                  setHours(value);
+                }}
+              ></input>
+              <span className="time__item"> Hour(s) / day</span>
+            </div>
+            {hours > 0 && (
+              <p className="time__item">
+                It will take {Math.ceil(total_runtime_mins / (hours * 60))}{" "}
+                day(s) to finish the entire show
+              </p>
+            )}
           </div>
-          {hours > 0 && (
-            <p className="time__item">
-              It will take {Math.ceil(total_runtime_mins / (hours * 60))} day(s)
-              to finish the entire show
-            </p>
-          )}
-        </div>
+        )}
       </div>
     </div>
   );

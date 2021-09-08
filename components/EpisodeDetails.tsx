@@ -19,16 +19,22 @@ const EpisodeDetails = ({ episode }: PropType) => {
     year,
   } = episode;
   return (
-    <div className="episode" id={`${seasonNumber}-${episodeNumber}`}>
+    <a
+      className="episode"
+      id={`${seasonNumber}-${episodeNumber}`}
+      href={`https://www.imdb.com/title/${id}`}
+      target="_blank"
+      rel="noreferrer"
+    >
       {image && (
-        <a className="episode__img" href={`https://www.imdb.com/title/${id}`}>
+        <div className="episode__img">
           <Image
             src={image as any}
             alt={title}
             layout="fill"
             objectFit="cover"
           />
-        </a>
+        </div>
       )}
 
       <div className="episode__info">
@@ -57,7 +63,7 @@ const EpisodeDetails = ({ episode }: PropType) => {
         <p className="episode__detail">Released: {released}</p>
         <p className="episode__detail episode__detail--plot">{plot}</p>
       </div>
-    </div>
+    </a>
   );
 };
 

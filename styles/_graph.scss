@@ -2,14 +2,11 @@
 @import "variables";
 @import "modularscale";
 .graph {
-  width: 100%;
+  width: min(100%, 80em);
   height: 70vh;
   padding: 1em;
   margin-bottom: 1em;
   z-index: 1;
-  @include responsive(HD) {
-    padding: 0 10em;
-  }
 }
 
 .tick {

@@ -1,4 +1,5 @@
 @import "variables";
+@import "mixins";
 @import "modularscale";
 
 .show {
@@ -11,6 +12,10 @@
   width: 100%;
   background: $clr-background-dark;
   color: $clr-text-light;
+
+  & > * {
+    width: min(100%, 45ch);
+  }
 
   &__img {
     position: relative;

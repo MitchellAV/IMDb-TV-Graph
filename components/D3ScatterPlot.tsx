@@ -142,41 +142,30 @@ const D3ScatterPlot = ({ data, season_statistics }: D3ScatterPlotType) => {
       g
         .attr("transform", `translate(0,${height - margin.bottom})`)
         //@ts-ignore
-        .call(d3.axisBottom(x).tickFormat(d3.format("d")).ticks(10))
+        .call(
+          //@ts-ignore
+
+          d3.axisBottom(x).tickFormat((x) => (x >= 0 && x <= xMax ? x : null))
+        )
         .call((g: any) => g.select(".domain").remove());
     // Define yAxis using d3.axisLeft(), assigning the scale as `yScale`
     let drawYAxis = (g: any, y: any) =>
       g
         .attr("transform", `translate(${margin.left},0)`)
-        .call(d3.axisLeft(y).ticks(null).tickSize(-drawWidth))
+        .call(
+          //@ts-ignore
+
+          d3
+            .axisLeft(y)
+            .tickFormat((y) => (y >= 1 && y <= 10 ? y : null))
+            .ticks(null)
+            .tickSize(-drawWidth)
+        )
         .call((g: any) => g.select(".domain").remove());
-
-    /////////////////////////////
-
-    // Append a `g` to the `svg` as an x axis label, specifying the 'transform' attribute to position it
-    // Use the `.call` method to render the axis in the `g`
-    // xAxis
-    //   .attr(
-    //     "transform",
-    //     "translate(" + margin.left + "," + (drawHeight + margin.top) + ")"
-    //   )
-    //   .attr("class", "axis")
-    //   .call(drawXAxis);
-
-    // Append a `g` to the `svg` as a y axis label, specifying the 'transform' attribute to position it
-    // Use the `.call` method to render the axis in the `g`
-    // yAxis
-    //   .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-    //   .attr("class", "axis")
-    //   .call(drawYAxis);
 
     // Append a text element to the svg to label the x axis
     let xAxisText = svg
       .append("text")
-      // .attr(
-      //   "transform",
-      //   `translate(${drawWidth / 2 - 20}, ${height - margin.bottom + 40})`
-      // )
       .attr("id", "x-axis")
       .attr("class", "axis axis__label--x")
       .text(xLabel);
@@ -197,7 +186,6 @@ const D3ScatterPlot = ({ data, season_statistics }: D3ScatterPlotType) => {
     let yAxisText = svg
       .append("text")
       .attr("id", "y-axis")
-
       .attr("class", "axis axis__label--y")
       .text(yLabel);
 
@@ -244,12 +232,6 @@ const D3ScatterPlot = ({ data, season_statistics }: D3ScatterPlotType) => {
         );
     };
 
-    // let mousemove = function (e: any, d: any) {
-    //   tooltip
-    //     .style("top", e.pageY + 30 + "px")
-    //     .style("left", e.pageX + 30 + "px");
-    // };
-
     // A function that change this tooltip when the leaves a point: just need to set opacity to 0 again
     let mouseleave = function (e: MouseEvent, d: D3EpisodeType) {
       tooltip.style("opacity", 0).style("display", "none");
@@ -258,7 +240,7 @@ const D3ScatterPlot = ({ data, season_statistics }: D3ScatterPlotType) => {
     // Select all circles and bind data to the selection
 
     // Create the scatter variable: where both the circles and the brush take place
-    const chart_area = svg
+    const clip_path = svg
       .append("defs")
       .append("SVG:clipPath")
       .attr("id", "clip-path")
@@ -281,12 +263,10 @@ const D3ScatterPlot = ({ data, season_statistics }: D3ScatterPlotType) => {
         d3
           .line()
           // @ts-ignore
-
           .x((d: D3EpisodeType) => {
             return xScale(d.true_ep_count);
           })
           // @ts-ignore
-
           .y((d: D3EpisodeType) => {
             return yScale(d.imDbRating);
           })
@@ -328,7 +308,6 @@ const D3ScatterPlot = ({ data, season_statistics }: D3ScatterPlotType) => {
     function zoomed({ transform }: any) {
       const zx = transform.rescaleX(xScale);
       const zy = transform.rescaleY(yScale);
-      // console.log(transform);
 
       drawArea
         .selectAll("circle")
@@ -422,8 +401,8 @@ const D3ScatterPlot = ({ data, season_statistics }: D3ScatterPlotType) => {
     const zoom = d3
       .zoom()
       .translateExtent([
-        [-width * 0.5, -height * 0.5],
-        [width * 1.5, height * 1.5],
+        [-width * 0.1, -height * 0.1],
+        [width * 1.1, height * 1.1],
       ])
       .scaleExtent([1, 10])
       .on("zoom", zoomed);

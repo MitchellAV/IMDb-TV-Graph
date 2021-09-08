@@ -42,6 +42,9 @@
 
   background: $clr-background-light;
 
+  text-decoration: none;
+  color: $clr-black;
+
   @include responsive(Tablet) {
     display: grid;
     grid-template-columns: 1fr 2fr;
