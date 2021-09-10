@@ -50,7 +50,7 @@ const D3ScatterPlot = ({ data, season_statistics }: D3ScatterPlotType) => {
     const height = dimensions.height;
 
     const margin = {
-      top: 10,
+      top: 20,
       right: 0,
       bottom: 50,
       left: 50,
@@ -62,13 +62,13 @@ const D3ScatterPlot = ({ data, season_statistics }: D3ScatterPlotType) => {
     const colors = ["blue", "red", "green", "pink", "purple"];
 
     // Chart width and height - accounting for margins
-    let drawWidth = width - margin.left;
+    let drawWidth = width - margin.left - margin.right;
+
     let drawHeight = height - margin.top - margin.bottom;
 
     // Variables to display (i.e., which columns to select in the dataset)
     const xLabel = "Episode Number";
     const yLabel = "Episode Rating";
-    //////////////////////////////////////////
 
     // Find the maximum x value for the x Scale, and multiply it by 1.05 (to add space)
     let xMax = data.length;
@@ -100,44 +100,21 @@ const D3ScatterPlot = ({ data, season_statistics }: D3ScatterPlotType) => {
       .range([height - margin.bottom, margin.top])
       .domain([yMin, yMax]);
 
-    //////////////////////////
-    ////////////////////////////////////////////////////////
-
-    // const xAxisGrid = d3
-    //   .axisBottom(xScale)
-    //   .tickFormat(null)
-    //   .tickSize(-drawHeight);
-
-    // svg
-    //   .append("g")
-    //   .attr("class", "x axis-grid")
-    //   .attr("transform", `translate(0,${height - margin.bottom})`)
-    //   .call(xAxisGrid);
-
     const svg = d3
       .select("#tv-show-graph")
       .append("svg")
-      .attr("class", "D3-graph")
+      .attr("class", "d3")
       .attr("viewBox", `0 0 ${width} ${height}`);
 
-    // const drawGrid = (g: any) => {
-    //   g.axisLeft(yScale).tickFormat(null).tickSize(-drawWidth);
-    // };
-
-    // svg
-    //   .append("g")
-    //   .attr("class", "y axis-grid")
-    //   .attr("opacity", 0.2)
-    //   .attr("transform", `translate(${margin.left},0)`)
-    //   .call(yAxisGrid)
-    //   .call((g: any) => g.select(".domain").remove())
-    //   .call((g: any) => g.selectAll("text").remove());
-
     // Define xAxis using d3.axisBottom, assigning the scale as `xScale`
-    const yAxisGrid = svg.append("g");
+    const graph_decorations = svg.append("g").attr("class", "d3__decorations");
+    const xAxis = graph_decorations
+      .append("g")
+      .attr("class", "d3__axis d3__axis--x");
+    const yAxis = graph_decorations
+      .append("g")
+      .attr("class", "d3__axis d3__axis--y");
 
-    const xAxis = svg.append("g");
-    const yAxis = svg.append("g");
     let drawXAxis = (g: any, x: any) =>
       g
         .attr("transform", `translate(0,${height - margin.bottom})`)
@@ -154,7 +131,6 @@ const D3ScatterPlot = ({ data, season_statistics }: D3ScatterPlotType) => {
         .attr("transform", `translate(${margin.left},0)`)
         .call(
           //@ts-ignore
-
           d3
             .axisLeft(y)
             .tickFormat((y) => (y >= 1 && y <= 10 ? y : null))
@@ -164,10 +140,10 @@ const D3ScatterPlot = ({ data, season_statistics }: D3ScatterPlotType) => {
         .call((g: any) => g.select(".domain").remove());
 
     // Append a text element to the svg to label the x axis
-    let xAxisText = svg
+    let xAxisText = graph_decorations
       .append("text")
       .attr("id", "x-axis")
-      .attr("class", "axis axis__label--x")
+      .attr("class", "d3__label")
       .text(xLabel);
 
     const x_label_el = document.getElementById("x-axis");
@@ -183,10 +159,10 @@ const D3ScatterPlot = ({ data, season_statistics }: D3ScatterPlotType) => {
     }
 
     // Append a text element to the svg to label the y axis
-    let yAxisText = svg
+    let yAxisText = graph_decorations
       .append("text")
       .attr("id", "y-axis")
-      .attr("class", "axis axis__label--y")
+      .attr("class", "d3__label")
       .text(yLabel);
 
     const y_label_el = document.getElementById("y-axis");
@@ -204,17 +180,7 @@ const D3ScatterPlot = ({ data, season_statistics }: D3ScatterPlotType) => {
     let tooltip = d3
       .select("#tv-show-graph")
       .append("div")
-      .attr("class", "tooltip")
-      .style("background-color", "white")
-      .style("opacity", "0")
-      .style("color", "black")
-      .style("font-size", "16px")
-      .style("border", "solid")
-      .style("border-width", "1px")
-      .style("border-radius", "5px")
-      .style("padding", "10px")
-      .style("position", "absolute")
-      .style("max-width", "300px");
+      .attr("class", "tooltip");
 
     // A function that change this tooltip when the user hover a point.
     // Its opacity is set to 1: we can now see it. Plus it set the text and position of tooltip depending on the datapoint (d)
@@ -222,22 +188,50 @@ const D3ScatterPlot = ({ data, season_statistics }: D3ScatterPlotType) => {
       tooltip.style("opacity", 1).style("display", "block");
       tooltip
         .html(
-          `<div class='d3_tooltip'><h3> ${d.seasonNumber} - ${d.episodeNumber}: ${d.title}</h3><p><b>Rating:</b> ${d.imDbRating}</p><p><b>Votes:</b> ${d.imDbRatingCount}</p><p><b>Aired:<b/> ${d.released}</p><p>Overview: ${d.plot}</p></div>`
+          `<div id='tooltip' class='tooltip__container'><div class='tooltip__img'><img src=${d.image}></img></div><h3>${d.seasonNumber} - ${d.episodeNumber}: ${d.title}</h3><span class='tooltip__wrapper'><svg
+          class="tooltip__item icon icon--star"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="#000000"
+          height="24"
+          viewBox="0 0 24 24"
+          width="24"
+        >
+          <path d="M0 0h24v24H0z" fill="none"></path>
+          <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path>
+          <path d="M0 0h24v24H0z" fill="none"></path>
+        </svg> <p class='tooltip__item'>${d.imDbRating} (${d.imDbRatingCount} votes)</p></span><p class='tooltip__item'>Released: ${d.released}</p><p class='tooltip__item'>${d.plot}</p></div>`
         )
         .style("top", e.pageY + 20 + "px")
         .style(
           "left",
           // @ts-ignore
-          e.pageX - document.querySelector(".d3_tooltip").offsetWidth / 2 + "px"
+          tooltip_position(e) + "px"
         );
     };
 
+    const tooltip_position = (e: MouseEvent) => {
+      const pageX = e.pageX;
+      const tooltip = document.getElementById("tooltip");
+      const page_width = window.innerWidth;
+      const padding = 50;
+
+      if (tooltip) {
+        const tooltip_width = tooltip.offsetWidth;
+        const half_position = pageX - tooltip_width / 2;
+        if (half_position < 0) {
+          return 0;
+        } else if (half_position + tooltip_width > page_width) {
+          return page_width - tooltip_width - padding;
+        } else {
+          return half_position;
+        }
+      }
+      return 0;
+    };
     // A function that change this tooltip when the leaves a point: just need to set opacity to 0 again
     let mouseleave = function (e: MouseEvent, d: D3EpisodeType) {
       tooltip.style("opacity", 0).style("display", "none");
     };
-    /* ************************************* Data Join ************************************** */
-    // Select all circles and bind data to the selection
 
     // Create the scatter variable: where both the circles and the brush take place
     const clip_path = svg
@@ -245,18 +239,20 @@ const D3ScatterPlot = ({ data, season_statistics }: D3ScatterPlotType) => {
       .append("SVG:clipPath")
       .attr("id", "clip-path")
       .append("rect")
+      .attr("class", "d3__clip-path")
       .attr("x", margin.left)
       .attr("y", margin.top)
       .attr("height", drawHeight)
       .attr("width", drawWidth);
-    const drawArea = svg.append("g").attr("clip-path", "url(#clip-path)");
+    const drawArea = svg
+      .append("g")
+      .attr("clip-path", "url(#clip-path)")
+      .attr("class", "d3__draw-area");
+    const trendlines = drawArea.append("g").attr("class", "d3__trendlines");
     const line = drawArea
       .append("path")
+      .attr("class", "d3__line-plot")
       .datum(data)
-      .attr("fill", "none")
-      .attr("stroke-opacity", 0.5)
-      .attr("stroke", "black")
-      .attr("stroke-width", 1.5)
       .attr(
         "d",
         // @ts-ignore
@@ -273,17 +269,16 @@ const D3ScatterPlot = ({ data, season_statistics }: D3ScatterPlotType) => {
       );
     const scatter = drawArea
       .append("g")
-      .attr("stroke", "#000")
-      .attr("stroke-opacity", 0.2)
+      .attr("class", "d3__scatter-plot")
       .selectAll("circle")
       .data(data)
       .join("circle")
+      .attr("class", (d) => `d3__circle season-${d.seasonNumber}`)
       .attr("cx", (d) => xScale(d.true_ep_count))
       .attr("cy", (d) => yScale(d.imDbRating))
       .attr("fill", (d) => colors[parseInt(d.seasonNumber) % colors.length])
       .attr("r", radius)
       .on("mouseover", mouseover)
-      // .on("mousemove", mousemove)
       .on("mouseleave", mouseleave)
       .on("click", (e, d) => {
         document
@@ -291,14 +286,50 @@ const D3ScatterPlot = ({ data, season_statistics }: D3ScatterPlotType) => {
           ?.scrollIntoView();
       });
 
-    let extra_lines: d3.Selection<
-      SVGLineElement,
-      unknown,
-      HTMLElement,
-      any
-    >[][] = [];
-
     svg.on("dblclick", function () {
+      // const season = svg.selectAll(".season-1");
+      // // @ts-ignore
+      // const area = season.nodes();
+      // // const { width: area_width, height: area_height } = area;
+      // // console.log(area_width, area_height);
+      // let xMin = Infinity,
+      //   xMax = -Infinity,
+      //   yMin = Infinity,
+      //   yMax = -Infinity;
+      // for (const selection of area) {
+      //   console.log(selection);
+      //   // @ts-ignore
+      //   const { left, right, top, bottom } = selection.getBoundingClientRect();
+      //   if (left < xMin) {
+      //     xMin = left;
+      //   }
+      //   if (right > xMax) {
+      //     xMax = right;
+      //   }
+      //   if (top < yMin) {
+      //     yMin = top;
+      //   }
+      //   if (bottom > yMax) {
+      //     yMax = bottom;
+      //   }
+      // }
+      // const area_width = xMax - xMin;
+      // const area_height = yMax - yMin;
+      // console.log(xMin, yMin);
+
+      // xScale.domain([1, 10]);
+
+      // svg
+      //   .call(zoom.transform as any, d3.zoomIdentity)
+      //   .transition()
+      //   .duration(750)
+      //   .call(
+      //     zoom.transform as any,
+      //     d3.zoomIdentity.translate(xMin, 0)
+      // .scale(1 / Math.max(area_width / width, area_height / height))
+      // .translate(-xMin, -yMin)
+      // d3.pointer(event, svg.node()
+      // );
       svg
         .transition()
         .duration(750)
@@ -335,7 +366,6 @@ const D3ScatterPlot = ({ data, season_statistics }: D3ScatterPlotType) => {
 
       xAxis.call(drawXAxis, zx);
       yAxis.call(drawYAxis, zy);
-      // yAxisGrid.call(drawGrid, zx, zy);
     }
 
     const draw_trendline = (
@@ -348,53 +378,51 @@ const D3ScatterPlot = ({ data, season_statistics }: D3ScatterPlotType) => {
         y: number;
       },
       color: string,
+      season_number: number,
       std_err?: number
     ) => {
-      const lines = [];
+      const season_g = trendlines
+        .append("g")
+        .attr("class", `season-${season_number}`);
       if (std_err) {
         const sigma95 = std_err;
-        const upper = drawArea
-          .append("line") // attach a line
+        const upper = season_g
+          .append("line")
+          .attr("class", `d3__line d3__line--std`) // attach a line
           .attr("stroke", color)
-          .style("stroke-dasharray", "3, 3")
           .attr("x1", (d) => xScale(start.x)) // x position of the first end of the line
           .attr("y1", (d) => yScale(start.y + sigma95)) // y position of the first end of the line
           .attr("x2", (d) => xScale(end.x)) // x position of the second end of the line
           .attr("y2", (d) => yScale(end.y + sigma95));
-        lines.push(upper);
-        const lower = drawArea
-          .append("line") // attach a line
+
+        const lower = season_g
+          .append("line")
+          .attr("class", `d3__line d3__line--std`) // attach a line
           .attr("stroke", color)
-          .style("stroke-dasharray", "3, 3")
           .attr("x1", (d) => xScale(start.x)) // x position of the first end of the line
           .attr("y1", (d) => yScale(start.y - sigma95)) // y position of the first end of the line
           .attr("x2", (d) => xScale(end.x)) // x position of the second end of the line
           .attr("y2", (d) => yScale(end.y - sigma95));
-        lines.push(lower);
       }
-      const middle = drawArea
-        .append("line") // attach a line
+      const middle = season_g
+        .append("line")
+        .attr("class", `d3__line`) // attach a line
         .attr("stroke", color)
         .attr("x1", (d) => xScale(start.x)) // x position of the first end of the line
         .attr("y1", (d) => yScale(start.y)) // y position of the first end of the line
         .attr("x2", (d) => xScale(end.x)) // x position of the second end of the line
         .attr("y2", (d) => yScale(end.y));
-      lines.push(middle);
-
-      return lines;
     };
-    season_statistics.forEach((trendline, index) => {
-      extra_lines = [];
+    season_statistics.forEach((trendline) => {
       if (trendline) {
         const { start, end, std_err, season_number } = trendline;
-
-        const season_lines = draw_trendline(
+        draw_trendline(
           start,
           end,
           colors[season_number % colors.length],
+          season_number,
           1.96 * std_err
         );
-        extra_lines.push([...season_lines]);
       }
     });
 

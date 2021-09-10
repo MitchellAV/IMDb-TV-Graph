@@ -181,10 +181,10 @@ const ShowDetails = ({ show_info, episode_statistics }: PropType) => {
           </p>
         )}
 
-        <p className="show__attr">
+        <div className="show__attr show__attr--plot">
           <b>Synopsis:</b>
-          <br /> {plot}
-        </p>
+          <p className="show__text">{plot}</p>
+        </div>
         <p className="show__attr">
           <b>Number of Seasons:</b> {num_seasons}
         </p>

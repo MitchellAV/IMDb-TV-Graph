@@ -1,6 +1,8 @@
 .icon {
-  display: block;
-  height: 1em;
+  display: inline;
+  vertical-align: text-top;
+  font-size: ms(1);
+  height: auto;
   width: 1em;
   &--star {
     fill: #c39400;
