@@ -11,7 +11,11 @@
 }
 html {
   scroll-behavior: smooth;
+}
+html,
+body {
   overflow-x: hidden;
+  width: 100%;
 }
 
 p {
@@ -41,5 +45,5 @@ main {
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  overflow-x: hidden;
+  width: 100%;
 }

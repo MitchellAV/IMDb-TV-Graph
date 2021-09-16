@@ -103,21 +103,21 @@ const Show = ({ show }: ShowProps) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { query } = context;
-  const { slug, ...rest } = query;
-  const URI = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/tv/${slug}`;
+  try {
+    const { query } = context;
+    const { slug, ...rest } = query;
+    const URI = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/tv/${slug}`;
 
-  const options = { params: rest, timeout: 1000 * 60 * 5 };
-  const res = await axios.get(URI, options);
-  const data = res.data as ShowWithSeasonInfoType;
+    const options = { params: rest };
+    const res = await axios.get(URI, options);
+    const data = res.data as ShowWithSeasonInfoType;
 
-  if (!data) {
+    return { props: { show: data } };
+  } catch (err) {
     return {
       notFound: true,
     };
   }
-
-  return { props: { show: data } };
 };
 
 export default Show;

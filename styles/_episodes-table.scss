@@ -85,6 +85,15 @@
   width: 100%;
   border-bottom: 2px solid black;
 
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  &__icon {
+    font-size: ms(1);
+  }
+
   &__stats {
     margin: 1em 0;
   }

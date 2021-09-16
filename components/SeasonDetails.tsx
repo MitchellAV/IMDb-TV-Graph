@@ -18,9 +18,18 @@ const SeasonDetails = ({
   return (
     <div className="season">
       <div className="season__stats" onClick={() => setIsOpen(!isOpen)}>
-        <h3 className="season__header">Season {season_number}</h3>
+        <div className="season__header">
+          <h3>Season {season_number}</h3>
+
+          <i
+            className={`fa ${
+              isOpen ? "fa-chevron-down" : "fa-chevron-right"
+            } season__icon`}
+          ></i>
+        </div>
         <ShowStatistics episode_statistics={season_statistic} />
       </div>
+
       {isOpen && (
         <div className="season__episodes">
           {season.map((ep, index) => (
