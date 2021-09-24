@@ -19,10 +19,8 @@ interface ShowProps {
 }
 
 const Show = ({ show }: ShowProps) => {
-  console.log(show);
-  const { show_info } = show;
+  const { show_info, seasons } = show;
   const { title, similars } = show_info;
-  const seasons = show.seasons;
 
   const episodes_info = format_episodes_d3_scatter(seasons);
 
@@ -82,6 +80,7 @@ const Show = ({ show }: ShowProps) => {
       <SearchForm />
       <ShowDetails
         show_info={show_info}
+        seasons={seasons.length}
         episode_statistics={episode_statistics}
       />
       <SimilarShows similarShows={similars} />
@@ -106,6 +105,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const { query } = context;
     const { slug, ...rest } = query;
+
+    if (isNaN(parseInt(slug as string))) throw new Error("nan");
+
     const URI = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/tv/${slug}`;
 
     const options = { params: rest };

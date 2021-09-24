@@ -20,7 +20,6 @@ const SearchForm = () => {
       const data = res.data as SearchType;
       setIsLoading(false);
       setSearchResults(data.results);
-      console.log(data.results);
     } catch (err) {
       setIsLoading(false);
       setSearchResults([]);

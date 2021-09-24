@@ -32,6 +32,7 @@ const SimilarShows = ({ similarShows }: PropType) => {
         promises.push(get_tmdb_id(imdb_id));
       }
       const show_exists = await Promise.all(promises);
+
       setExists(show_exists);
     };
     fetch_is_show(similarShows);

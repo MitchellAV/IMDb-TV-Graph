@@ -6,6 +6,7 @@ import { useState } from "react";
 
 interface PropType {
   show_info: IMDBShowInfoType;
+  seasons: number;
   episode_statistics: SeasonStatData | null;
 }
 
@@ -56,7 +57,7 @@ const format_runtime_string = (mins_total: number) => {
   return string;
 };
 
-const ShowDetails = ({ show_info, episode_statistics }: PropType) => {
+const ShowDetails = ({ show_info, seasons, episode_statistics }: PropType) => {
   const {
     actorList,
     companyList,
@@ -76,11 +77,12 @@ const ShowDetails = ({ show_info, episode_statistics }: PropType) => {
     runtimeMins,
     starList,
     title,
-    tvSeriesInfo: { creatorList, seasons },
+    tvSeriesInfo: { creatorList },
   } = show_info;
 
   const num_stars = starList.length;
-  const num_seasons = seasons.length;
+
+  const num_seasons = seasons;
   let runtime_length_string = "";
   let total_runtime_mins = 0;
   if (runtimeMins && episode_statistics) {
