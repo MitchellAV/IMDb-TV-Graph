@@ -157,7 +157,6 @@ const ShowDetails = ({ show_info, seasons, episode_statistics }: PropType) => {
             <b>Full Title:</b> {fullTitle}
           </p>
         )}
-
         <p className="show__attr">
           <b>Rating:</b> {imDbRating}/10 ({imDbRatingVotes} votes)
         </p>
@@ -166,7 +165,6 @@ const ShowDetails = ({ show_info, seasons, episode_statistics }: PropType) => {
             <b>Release Date:</b> {releaseDate}
           </p>
         )}
-
         {contentRating && (
           <p className="show__attr">
             <b>Content Rating:</b> {contentRating}
@@ -182,30 +180,12 @@ const ShowDetails = ({ show_info, seasons, episode_statistics }: PropType) => {
             <b>Countries:</b> {countries}
           </p>
         )}
-
-        <div className="show__attr show__attr--plot">
-          <b>Synopsis:</b>
-          <p className="show__text">{plot}</p>
-        </div>
-        <p className="show__attr">
-          <b>Number of Seasons:</b> {num_seasons}
-        </p>
-        {episode_statistics && (
-          <p className="show__attr">
-            <b>Number of Episodes:</b> {episode_statistics.n}
-          </p>
+        {plot && (
+          <div className="show__attr show__attr--plot">
+            <b>Synopsis:</b>
+            <p className="show__text">{plot}</p>
+          </div>
         )}
-        {runtimeStr && (
-          <p className="show__attr">
-            <b>Episode Runtime:</b> {runtimeStr}
-          </p>
-        )}
-        {runtime_length_string && (
-          <p className="show__attr">
-            <b>Total Runtime:</b> {runtime_length_string}
-          </p>
-        )}
-
         <p className="show__attr">
           <b>Creators:</b>{" "}
           {creatorList.map((creator) => (
@@ -291,35 +271,55 @@ const ShowDetails = ({ show_info, seasons, episode_statistics }: PropType) => {
             </a>
           ))}
         </p>
-
-        {episode_statistics && (
-          <ShowStatistics episode_statistics={episode_statistics} />
-        )}
-        {runtimeStr && (
-          <div className="show__attr time">
-            <label className="time__item time__item--label" htmlFor="time">
-              How many hours of free time do you have per day?
-            </label>
-            <div className="time__container">
-              <input
-                className="time__item time__item--input"
-                id="time"
-                name="time"
-                type="number"
-                onChange={(e) => {
-                  let value = parseInt(e.currentTarget.value);
-                  setHours(value);
-                }}
-              ></input>
-              <span className="time__item"> Hour(s) / day</span>
-            </div>
-            {hours > 0 && (
-              <p className="time__item">
-                It will take {Math.ceil(total_runtime_mins / (hours * 60))}{" "}
-                day(s) to finish the entire show
+        {seasons > 0 && (
+          <>
+            {num_seasons && (
+              <p className="show__attr">
+                <b>Number of Seasons:</b> {num_seasons}
               </p>
             )}
-          </div>
+            {episode_statistics && (
+              <p className="show__attr">
+                <b>Number of Episodes:</b> {episode_statistics.n}
+              </p>
+            )}
+            {runtimeStr && (
+              <p className="show__attr">
+                <b>Episode Runtime:</b> {runtimeStr}
+              </p>
+            )}
+            {runtime_length_string && (
+              <p className="show__attr">
+                <b>Total Runtime:</b> {runtime_length_string}
+              </p>
+            )}
+            <div className="show__attr time">
+              <label className="time__item time__item--label" htmlFor="time">
+                How many hours of free time do you have per day?
+              </label>
+              <div className="time__container">
+                <input
+                  className="time__item time__item--input"
+                  id="time"
+                  name="time"
+                  type="number"
+                  min={0}
+                  max={24}
+                  onChange={(e) => {
+                    let value = parseFloat(e.currentTarget.value);
+                    setHours(value);
+                  }}
+                ></input>
+                <span className="time__item"> Hour(s) / day</span>
+              </div>
+              {hours > 0 && (
+                <p className="time__item">
+                  It will take {Math.ceil(total_runtime_mins / (hours * 60))}{" "}
+                  day(s) to finish the entire show
+                </p>
+              )}
+            </div>
+          </>
         )}
       </div>
     </div>

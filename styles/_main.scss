@@ -11,4 +11,8 @@
     background: $clr-background-dark;
     color: $clr-text-light;
   }
+  &__stats {
+    width: min(100%, 40em);
+    padding: 1em;
+  }
 }

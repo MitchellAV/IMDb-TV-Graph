@@ -1,35 +1,74 @@
 import { GetServerSideProps } from "next";
 import axios from "axios";
-import { ShowWithSeasonInfoType } from "../../types";
+import {
+  ShowWithSeasonInfoType,
+  IMDBShowInfoType,
+  ImdbSeasonType,
+  D3EpisodeType,
+  SeasonStatData,
+} from "../../types";
 import D3ScatterPlot from "../../components/D3ScatterPlot";
 import Head from "next/head";
 
 import ShowDetails from "../../components/ShowDetails";
 import SimilarShows from "../../components/SimilarShows";
 import EpisodesTable from "../../components/EpisodesTable";
+import ShowStatistics from "../../components/ShowStatistics";
 import {
   calculate_statistics_for_episodes,
   calculate_statistics_for_seasons,
   format_episodes_d3_scatter,
 } from "../../util/statistics";
 import SearchForm from "../../components/SearchForm";
+import { useEffect, useState } from "react";
 
 interface ShowProps {
-  show: ShowWithSeasonInfoType;
+  show_info: IMDBShowInfoType;
 }
 
-const Show = ({ show }: ShowProps) => {
-  const { show_info, seasons } = show;
+const Show = ({ show_info }: ShowProps) => {
   const { title, similars } = show_info;
-
-  const episodes_info = format_episodes_d3_scatter(seasons);
-
-  const episode_statistics = calculate_statistics_for_episodes(episodes_info);
-  const season_statistics = calculate_statistics_for_seasons(
-    seasons,
-    episodes_info
+  const { id } = show_info;
+  const [isLoading, setIsLoading] = useState(true);
+  const [seasons, setSeasons] = useState<ImdbSeasonType[]>([]);
+  const [episodes_info, setEpisodesInfo] = useState<D3EpisodeType[]>([]);
+  const [episode_statistics, setEpisodeStatistics] =
+    useState<SeasonStatData | null>(null);
+  const [season_statistics, setSeasonStatistics] = useState<SeasonStatData[]>(
+    []
   );
-  const rated_episodes = episodes_info.filter((ep) => ep.imDbRating !== 0);
+  const [rated_episodes, setRatedEpisodes] = useState<D3EpisodeType[]>([]);
+
+  const fetchSeasons = async (imdb_id: string) => {
+    const URI = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/tv/${imdb_id}/seasons`;
+
+    const options = { timeout: 1000 * 60 };
+    const res = await axios.get(URI, options);
+    const data = res.data.seasons as ImdbSeasonType[];
+
+    return data;
+  };
+
+  useEffect(() => {
+    fetchAndUpdateSeasonInfo(id);
+  }, [show_info]);
+
+  const fetchAndUpdateSeasonInfo = async (imdb_id: string) => {
+    const season_info = await fetchSeasons(id);
+    setSeasons(season_info);
+    const episodes_info = format_episodes_d3_scatter(season_info);
+    setEpisodesInfo(episodes_info);
+    const episode_statistics = calculate_statistics_for_episodes(episodes_info);
+    setEpisodeStatistics(episode_statistics);
+    const season_statistics = calculate_statistics_for_seasons(
+      season_info,
+      episodes_info
+    );
+    setSeasonStatistics(season_statistics);
+    const rated_episodes = episodes_info.filter((ep) => ep.imDbRating !== 0);
+    setRatedEpisodes(rated_episodes);
+    setIsLoading(false);
+  };
 
   return (
     <main className="main">
@@ -84,17 +123,33 @@ const Show = ({ show }: ShowProps) => {
         episode_statistics={episode_statistics}
       />
       <SimilarShows similarShows={similars} />
-      {rated_episodes.length > 0 && (
+      {isLoading ? (
+        <h3 className="search-result__modal">
+          <span>
+            <i className="fa fa-spinner fa-spin"></i>
+          </span>
+          Getting Season Information
+        </h3>
+      ) : (
         <>
-          <h1 className="main__title">{title}</h1>
-          <D3ScatterPlot
-            data={episodes_info}
-            season_statistics={season_statistics}
-          />
-          <EpisodesTable
-            episodes={episodes_info}
-            season_statistics={season_statistics}
-          />
+          {rated_episodes.length > 0 && (
+            <>
+              <h1 className="main__title">{title}</h1>
+              <D3ScatterPlot
+                data={episodes_info}
+                season_statistics={season_statistics}
+              />
+              {episode_statistics && (
+                <div className="main__stats">
+                  <ShowStatistics episode_statistics={episode_statistics} />
+                </div>
+              )}
+              <EpisodesTable
+                episodes={episodes_info}
+                season_statistics={season_statistics}
+              />
+            </>
+          )}
         </>
       )}
     </main>
@@ -114,7 +169,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const res = await axios.get(URI, options);
     const data = res.data as ShowWithSeasonInfoType;
 
-    return { props: { show: data } };
+    return { props: data };
   } catch (err) {
     return {
       notFound: true,
