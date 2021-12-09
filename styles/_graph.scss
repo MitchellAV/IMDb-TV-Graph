@@ -5,20 +5,43 @@
   width: min(100%, 80em);
   height: 70vh;
   padding: 1em;
-  margin-bottom: 1em;
   z-index: 1;
+
+  &__controls {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: center;
+    padding: 0.5em;
+  }
+  &__button {
+    min-width: 2em;
+    padding: 0.5em;
+    margin: 0.5em;
+  }
+}
+
+.chart {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: min(100%, 70vh);
+  width: 100%;
 }
 
 .d3 {
   &__decorations {
   }
   &__axis {
+    font-size: ms(0);
     &--x {
     }
     &--y {
     }
   }
   &__label {
+    font-size: ms(1);
   }
   &__clip-path {
   }
@@ -27,6 +50,7 @@
   &__trendlines {
   }
   &__line {
+    stroke-width: 3;
     &--std {
       stroke-dasharray: 5, 5;
     }

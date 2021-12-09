@@ -71,7 +71,9 @@ const SimilarShows = ({ similarShows }: PropType) => {
                   </div>
 
                   <div className="similar__details">
-                    <h3 className="similar__title">{title}</h3>
+                    <h3 className="similar__title">
+                      {title.replace("&amp;", "&")}
+                    </h3>
                     <p className="similar__years"> {year}</p>
                     <p className="similar__rating">Rating: {imDbRating}</p>
                     <p className="similar__genres">{genres}</p>

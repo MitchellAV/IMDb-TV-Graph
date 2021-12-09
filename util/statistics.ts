@@ -11,6 +11,8 @@ import {
   rSquared,
   sampleCorrelation,
   sampleCovariance,
+  sampleStandardDeviation,
+  zScore,
 } from "simple-statistics";
 
 import { D3EpisodeType, ImdbSeasonType, SeasonStatData } from "../types";
@@ -71,25 +73,140 @@ export const calculate_statistics = (
     const startX = ratings[0].x;
     const endX = ratings[ratings.length - 1].x;
 
+    const gen_stats = (
+      ratings: { x: number; y: number }[],
+      outliers: number[]
+    ) => {
+      ratings = ratings.filter((ep) => !outliers.includes(ep.x));
+      const n = ratings.length;
+      const x = ratings.map((ep) => ep.x);
+      const y = ratings.map((ep) => ep.y);
+      const data_points = ratings.map((ep) => [ep.x, ep.y]);
+      const range_x = extent(x);
+      const range_y = extent(y);
+      const sum_y = sum(y);
+      const mean_y = mean(y);
+      const median_y = median(y);
+      const std_y = sampleStandardDeviation(y);
+      const iqr = interquartileRange(y);
+      const quartile = iqr / 2;
+      const l_quartile = median_y - quartile;
+      const u_quartile = median_y + quartile;
+      const l_limit = parseFloat((l_quartile - iqr * 1.5).toFixed(1));
+      const u_limit = parseFloat((u_quartile + iqr * 1.5).toFixed(1));
+
+      const line_mb = linearRegression(data_points);
+      const f = linearRegressionLine(line_mb);
+      const r2 = rSquared(data_points, f);
+      const std_err = Math.sqrt(
+        ratings.reduce((sum, ep) => {
+          return sum + Math.pow(ep.y - f(ep.x), 2);
+        }, 0) /
+          (n - 2)
+      );
+
+      let isOutlier = false;
+      let temp_outliers: { x: number; z: number }[] = [];
+
+      if (r2 > 0.4) {
+        console.log(r2);
+
+        const residuals = ratings.map((ep) => {
+          return {
+            x: ep.x,
+            y: ep.y - f(ep.x),
+          };
+        });
+        const r_y = residuals.map((ep) => ep.y);
+        const r_mean = mean(r_y);
+        const r_std = sampleStandardDeviation(r_y);
+        residuals.forEach((ep) => {
+          const z = Math.abs(zScore(ep.y, r_mean, r_std));
+          if (z > 1.96) {
+            console.log(season_number, ep.x, z, ep.y);
+            temp_outliers.push({ x: ep.x, z: z });
+            isOutlier = true;
+          }
+        });
+        if (temp_outliers.length !== 0) {
+          let max = temp_outliers.sort((a, b) => b.z - a.z)[0];
+          console.log(max);
+          outliers.push(max.x);
+        }
+      } else {
+        ratings.forEach((ep) => {
+          const z = Math.abs(zScore(ep.y, mean_y, std_y));
+          if (z > 1.96) {
+            console.log(season_number, ep.x, z, ep.y);
+            temp_outliers.push({ x: ep.x, z: z });
+            isOutlier = true;
+          }
+        });
+        if (temp_outliers.length !== 0) {
+          let max = temp_outliers.sort((a, b) => b.z - a.z)[0];
+          console.log(max);
+          outliers.push(max.x);
+        }
+      }
+
+      const stats = {
+        n,
+        line_mb,
+        range_x,
+        range_y,
+        median_y,
+        sum_y,
+        mean_y,
+        std_y,
+        iqr,
+        variance_y,
+        r2,
+        s_corr,
+        s_cov,
+        f,
+        std_err,
+        outliers,
+      };
+      return { stats, outliers, isOutlier };
+    };
+    const rec_stats = (
+      ratings: { x: number; y: number }[],
+      outliers: number[]
+    ) => {
+      const {
+        stats,
+        outliers: curr_outliers,
+        isOutlier,
+      } = gen_stats(ratings, outliers);
+      console.log(curr_outliers, stats.line_mb);
+
+      if (isOutlier === false) {
+        return stats;
+      } else {
+        return rec_stats(ratings, curr_outliers);
+      }
+    };
+    const removed_stats = rec_stats(ratings, []);
+
     const seasonStatData = {
       season_number: season_number || 0,
-      start: { x: startX, y: f(startX) },
-      end: { x: endX, y: f(endX) },
+      start: { x: startX, y: removed_stats.f(startX) },
+      end: { x: endX, y: removed_stats.f(endX) },
       n,
-      line_mb,
+      line_mb: removed_stats.line_mb,
       range_x,
       range_y,
-      median_y,
+      median_y: removed_stats.median_y,
       sum_y,
-      mean_y,
-      std_y,
+      mean_y: removed_stats.mean_y,
+      std_y: removed_stats.std_y,
       iqr,
       variance_y,
-      r2,
+      r2: removed_stats.r2,
       s_corr,
       s_cov,
-      f,
-      std_err,
+      f: removed_stats.f,
+      std_err: removed_stats.std_err,
     };
 
     return seasonStatData;

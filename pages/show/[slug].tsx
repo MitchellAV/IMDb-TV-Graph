@@ -69,7 +69,7 @@ const Show = ({ show_info }: ShowProps) => {
     setRatedEpisodes(rated_episodes);
     setIsLoading(false);
   };
-
+  const [currSeason, setCurrSeason] = useState(0);
   return (
     <main className="main">
       <Head>
@@ -134,11 +134,19 @@ const Show = ({ show_info }: ShowProps) => {
         <>
           {rated_episodes.length > 0 && (
             <>
-              <h1 className="main__title">{title}</h1>
-              <D3ScatterPlot
-                data={episodes_info}
-                season_statistics={season_statistics}
-              />
+              <div className="chart">
+                <h1 className="main__title">
+                  {title}
+                  {currSeason !== 0 && ` - Season ${currSeason}`}
+                </h1>
+
+                <D3ScatterPlot
+                  data={episodes_info}
+                  season_statistics={season_statistics}
+                  currSeason={currSeason}
+                  setCurrSeason={setCurrSeason}
+                />
+              </div>
               {episode_statistics && (
                 <div className="main__stats">
                   <ShowStatistics episode_statistics={episode_statistics} />

@@ -1,7 +1,29 @@
+import axios from "axios";
 import Head from "next/head";
+import { useEffect, useState } from "react";
+import PopularShows from "../components/PopularShows";
 import SearchForm from "../components/SearchForm";
+import { Trending } from "../types";
 
 const Home = () => {
+  const [popular, setPopular] = useState<Trending[]>([]);
+
+  useEffect(() => {
+    const fetchPopular = async () => {
+      try {
+        const URI = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/tv/trending/week`;
+        const res = await axios.get(URI);
+        const data = res.data.results as Trending[];
+        console.log(data);
+
+        setPopular(data);
+        return data;
+      } catch (err) {
+        return "";
+      }
+    };
+    fetchPopular();
+  }, []);
   return (
     <main>
       <Head>
@@ -53,6 +75,8 @@ const Home = () => {
       </Head>
       <h1 className="home__header">Search for a TV Show to Explore</h1>
       <SearchForm />
+      <h2 className="main__header">Trending Shows for the Week</h2>
+      <PopularShows popularShows={popular} />
     </main>
   );
 };
