@@ -172,7 +172,27 @@ export const calculate_statistics = (
     const rec_stats = (
       ratings: { x: number; y: number }[],
       outliers: number[]
-    ) => {
+    ): {
+      n: number;
+      line_mb: {
+        m: number;
+        b: number;
+      };
+      range_x: [number, number];
+      range_y: [number, number];
+      median_y: number;
+      sum_y: number;
+      mean_y: number;
+      std_y: number;
+      iqr: number;
+      variance_y: number;
+      r2: number;
+      s_corr: number;
+      s_cov: number;
+      f: (x: number) => number;
+      std_err: number;
+      outliers: number[];
+    } => {
       const {
         stats,
         outliers: curr_outliers,
@@ -207,6 +227,7 @@ export const calculate_statistics = (
       s_cov,
       f: removed_stats.f,
       std_err: removed_stats.std_err,
+      outliers: removed_stats.outliers,
     };
 
     return seasonStatData;

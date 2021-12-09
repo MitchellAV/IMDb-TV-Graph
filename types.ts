@@ -264,6 +264,7 @@ export interface SeasonStatData {
   s_cov: number;
   f: (x: number) => number;
   std_err: number;
+  outliers: number[];
 }
 
 ///////////////////////////
