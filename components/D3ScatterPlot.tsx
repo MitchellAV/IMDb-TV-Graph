@@ -552,6 +552,7 @@ const D3ScatterPlot = ({
               setXRange([s.range_x[0] - 1, s.range_x[1] + 1]);
               setCurrSeason(s.season_number);
             }}
+            key={s.season_number}
           >
             {s.season_number}
           </button>
