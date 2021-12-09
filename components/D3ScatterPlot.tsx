@@ -7,7 +7,6 @@ import {
   drawGrid,
   drawPlot,
   drawTrendlines,
-  enableZoom,
   initSVGElements,
   setXScale,
   setYScale,
@@ -103,7 +102,7 @@ const D3ScatterPlot = ({
 
     let yScale = setYScale(yMin, yMax, drawDimensions);
     d3.select("#tv-show-graph").html("");
-    const [
+    const {
       svg,
       drawArea,
       xAxis,
@@ -112,7 +111,7 @@ const D3ScatterPlot = ({
       trendlines,
       mouseover,
       mouseleave,
-    ] = initSVGElements(drawDimensions);
+    } = initSVGElements(drawDimensions);
     drawGrid(xMax, xScale, yScale, xAxis, yAxis, drawDimensions);
     const [line, scatter] = drawPlot(
       drawArea,

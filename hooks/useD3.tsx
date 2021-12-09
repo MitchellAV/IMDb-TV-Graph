@@ -60,6 +60,7 @@ const drawXAxis = (
 
       d3
         .axisBottom(x)
+        // @ts-ignore
         .tickFormat((x) => (x >= 0 && x % 1 == 0 && x <= xMax ? x : null))
     )
     .call((g: any) => g.select(".domain").remove());
@@ -225,7 +226,7 @@ export const initSVGElements = (drawDimensions: drawDimensions) => {
     .attr("class", "d3__draw-area");
   const trendlines = drawArea.append("g").attr("class", "d3__trendlines");
 
-  return [
+  return {
     svg,
     drawArea,
     xAxis,
@@ -234,55 +235,49 @@ export const initSVGElements = (drawDimensions: drawDimensions) => {
     trendlines,
     mouseover,
     mouseleave,
-  ];
+  };
 };
 
-export const enableZoom = (
-  svg,
-  xScale,
-  yScale,
-  drawArea,
-  line,
-  xAxis,
-  yAxis,
-  drawDimensions: drawDimensions
-) => {
-  const { height, width } = drawDimensions;
+// export const enableZoom = (
+//   svg,
+//   xScale,
+//   yScale,
+//   drawArea,
+//   line,
+//   xAxis,
+//   yAxis,
+//   drawDimensions: drawDimensions
+// ) => {
+//   const { height, width } = drawDimensions;
 
-  const zoom = d3
-    .zoom()
-    .translateExtent([
-      [-width * 0.1, -height * 0.1],
-      [width * 1.1, height * 1.1],
-    ])
-    .scaleExtent([1, 10])
-    .on("zoom", (e, d) =>
-      zoomed(e, xScale, yScale, drawArea, line, xAxis, yAxis, drawDimensions)
-    );
-  svg.on("dblclick", function () {
-    svg
-      .transition()
-      .duration(750)
-      .call(zoom.transform as any, d3.zoomIdentity);
-  });
-  svg
-    .call(zoom as any)
-    .call(zoom.transform as any, d3.zoomIdentity)
-    .on("dblclick.zoom", null);
-};
+//   const zoom = d3
+//     .zoom()
+//     .translateExtent([
+//       [-width * 0.1, -height * 0.1],
+//       [width * 1.1, height * 1.1],
+//     ])
+//     .scaleExtent([1, 10])
+//     .on("zoom", (e, d) =>
+//       zoomed(e, xScale, yScale, drawArea, line, xAxis, yAxis, drawDimensions)
+//     );
+//   svg.on("dblclick", function () {
+//     svg
+//       .transition()
+//       .duration(750)
+//       .call(zoom.transform as any, d3.zoomIdentity);
+//   });
+//   svg
+//     .call(zoom as any)
+//     .call(zoom.transform as any, d3.zoomIdentity)
+//     .on("dblclick.zoom", null);
+// };
 
 export const drawGrid = (
   xMax: number,
   xScale: d3.ScaleLinear<number, number, never>,
   yScale: d3.ScaleLinear<number, number, never>,
-  xAxis:
-    | d3.Selection<SVGSVGElement, unknown, HTMLElement, any>
-    | d3.Selection<SVGGElement, unknown, HTMLElement, any>
-    | d3.Selection<HTMLDivElement, unknown, HTMLElement, any>,
-  yAxis:
-    | d3.Selection<SVGSVGElement, unknown, HTMLElement, any>
-    | d3.Selection<SVGGElement, unknown, HTMLElement, any>
-    | d3.Selection<HTMLDivElement, unknown, HTMLElement, any>,
+  xAxis: d3.Selection<SVGGElement, unknown, HTMLElement, any>,
+  yAxis: d3.Selection<SVGGElement, unknown, HTMLElement, any>,
   drawDimensions: drawDimensions
 ) => {
   xAxis.call((g, x) => drawXAxis(g, x, xMax, drawDimensions), xScale);
@@ -290,10 +285,7 @@ export const drawGrid = (
 };
 
 export const drawPlot = (
-  drawArea:
-    | d3.Selection<SVGSVGElement, unknown, HTMLElement, any>
-    | d3.Selection<SVGGElement, unknown, HTMLElement, any>
-    | d3.Selection<HTMLDivElement, unknown, HTMLElement, any>,
+  drawArea: d3.Selection<SVGGElement, unknown, HTMLElement, any>,
   data: D3EpisodeType[],
   xScale: d3.ScaleLinear<number, number, never>,
   yScale: d3.ScaleLinear<number, number, never>,
@@ -341,47 +333,47 @@ export const drawPlot = (
   return [line, scatter];
 };
 
-const zoomed = (
-  e,
-  xScale,
-  yScale,
-  drawArea,
-  line,
-  xAxis,
-  yAxis,
-  drawDimensions
-) => {
-  const { transform } = e;
-  const zx = transform.rescaleX(xScale);
-  const zy = transform.rescaleY(yScale);
+// const zoomed = (
+//   e,
+//   xScale,
+//   yScale,
+//   drawArea,
+//   line,
+//   xAxis,
+//   yAxis,
+//   drawDimensions
+// ) => {
+//   const { transform } = e;
+//   const zx = transform.rescaleX(xScale);
+//   const zy = transform.rescaleY(yScale);
 
-  drawArea
-    .selectAll("circle")
-    .attr("transform", transform)
-    .attr("r", drawDimensions.radius / transform.k);
-  line.attr(
-    "d",
-    // @ts-ignore
-    d3
-      .line()
-      // @ts-ignore
+//   drawArea
+//     .selectAll("circle")
+//     .attr("transform", transform)
+//     .attr("r", drawDimensions.radius / transform.k);
+//   line.attr(
+//     "d",
+//     // @ts-ignore
+//     d3
+//       .line()
+//       // @ts-ignore
 
-      .x((d: D3EpisodeType) => {
-        return zx(d.true_ep_count);
-      })
-      // @ts-ignore
+//       .x((d: D3EpisodeType) => {
+//         return zx(d.true_ep_count);
+//       })
+//       // @ts-ignore
 
-      .y((d: D3EpisodeType) => {
-        return zy(d.imDbRating);
-      })
-  );
+//       .y((d: D3EpisodeType) => {
+//         return zy(d.imDbRating);
+//       })
+//   );
 
-  const x = drawArea.selectAll("line").attr("transform", transform);
-  // @ts-ignore
+//   const x = drawArea.selectAll("line").attr("transform", transform);
+//   // @ts-ignore
 
-  xAxis.call(drawXAxis, zx);
-  yAxis.call(drawYAxis, zy);
-};
+//   xAxis.call(drawXAxis, zx);
+//   yAxis.call(drawYAxis, zy);
+// };
 
 const draw_trendline = (
   trendlines:
