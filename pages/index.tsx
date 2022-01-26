@@ -6,24 +6,6 @@ import SearchForm from "../components/SearchForm";
 import { Trending } from "../types";
 
 const Home = () => {
-  const [popular, setPopular] = useState<Trending[]>([]);
-
-  useEffect(() => {
-    const fetchPopular = async () => {
-      try {
-        const URI = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/tv/trending/week`;
-        const res = await axios.get(URI);
-        const data = res.data.results as Trending[];
-        console.log(data);
-
-        setPopular(data);
-        return data;
-      } catch (err) {
-        return "";
-      }
-    };
-    fetchPopular();
-  }, []);
   return (
     <main>
       <Head>
@@ -53,21 +35,22 @@ const Home = () => {
         <link
           rel="apple-touch-icon"
           sizes="180x180"
-          href="apple-touch-icon.png"
+          href="/apple-touch-icon.png"
         />
         <link
           rel="icon"
           type="image/png"
           sizes="32x32"
-          href="favicon-32x32.png"
+          href="/favicon-32x32.png"
         />
         <link
           rel="icon"
           type="image/png"
           sizes="16x16"
-          href="favicon-16x16.png"
+          href="/favicon-16x16.png"
         />
-        <link rel="manifest" href="site.webmanifest" />
+        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="manifest" href="/site.webmanifest" />
         <link
           rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
@@ -75,8 +58,7 @@ const Home = () => {
       </Head>
       <h1 className="home__header">Search for a TV Show to Explore</h1>
       <SearchForm />
-      <h2 className="main__header">Trending Shows for the Week</h2>
-      <PopularShows popularShows={popular} />
+      <PopularShows />
     </main>
   );
 };

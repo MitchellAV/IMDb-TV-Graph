@@ -1,5 +1,5 @@
 const NotFound = (props: any) => {
-  return <div>Page not Found</div>;
+  return <main>Unable to get Information on that Tv Show</main>;
 };
 
 export default NotFound;

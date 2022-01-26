@@ -1,15 +1,32 @@
-import { Popular } from "../types";
+import { Popular, Trending } from "../types";
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
-interface PropType {
-  popularShows: Popular[];
-}
+const PopularShows = () => {
+  const [popular, setPopular] = useState<Trending[]>([]);
 
-const PopularShows = ({ popularShows }: PropType) => {
+  useEffect(() => {
+    const fetchPopular = async () => {
+      try {
+        const URI = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/tv/trending/day`;
+        const res = await axios.get(URI);
+        const data = res.data.results as Trending[];
+        console.log(data);
+
+        setPopular(data);
+        return data;
+      } catch (err) {
+        return "";
+      }
+    };
+    fetchPopular();
+  }, []);
   return (
     <>
+      <h2 className="main__header">Trending Shows for the Day</h2>
       <div className="similar">
-        {popularShows
+        {popular
           .filter((d) => d.overview !== "")
           .map((show, index) => {
             const {

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { RefObject, useState } from "react";
 import { D3EpisodeType, ImdbSeasonType, SeasonStatData } from "../types";
 import {
   calculate_statistics_for_seasons,
@@ -7,14 +7,16 @@ import {
   sort_seasons,
 } from "../util/statistics";
 import EpisodesDisplay from "./EpisodesDisplay";
+import ScrollButton from "./ScrollButton";
 import SeasonsDisplay from "./SeasonsDisplay";
 
 interface PropType {
   episodes: D3EpisodeType[];
   season_statistics: SeasonStatData[];
+  plotRef: RefObject<HTMLDivElement>;
 }
 
-const EpisodesTable = ({ episodes, season_statistics }: PropType) => {
+const EpisodesTable = ({ episodes, season_statistics, plotRef }: PropType) => {
   const [display, setDisplay] = useState("episodes");
   const [epSortBy, setEpSortBy] = useState("ep-asc");
   const [seasonSortBy, setSeasonSortBy] = useState("season-asc");
@@ -102,6 +104,8 @@ const EpisodesTable = ({ episodes, season_statistics }: PropType) => {
       </form>
 
       <div className="table__container">
+        <ScrollButton scrollToElementRef={plotRef} />
+
         {(() => {
           switch (display) {
             case "episodes":

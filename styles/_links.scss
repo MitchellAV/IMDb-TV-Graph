@@ -1,3 +1,6 @@
+@import "variables";
+@import "modularscale";
+
 .link {
   display: inline-block;
   text-decoration: none;
@@ -12,7 +15,7 @@
 
   &--similar {
     border: 1px solid black;
-    background-color: #f5c518;
+    background-color: $clr-emphasis;
     width: 100%;
     font-size: 1.125rem;
     padding: 0.1em 0.2em;
@@ -20,21 +23,21 @@
 
   &--show {
     border: 1px solid black;
-    background-color: #f5c518;
+    background-color: $clr-emphasis;
     padding: 0.1em 0.4em;
     margin-bottom: 0.5em;
   }
 
   &--main {
     border: 1px solid black;
-    background-color: #f5c518;
+    background-color: $clr-emphasis;
     padding: 0.1em 0.4em;
     align-self: center;
   }
 
   &--actor {
     border: 1px solid black;
-    background-color: #f5c518;
+    background-color: $clr-emphasis;
     padding: 0.1em 0.4em;
   }
 }

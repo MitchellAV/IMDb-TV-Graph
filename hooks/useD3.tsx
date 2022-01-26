@@ -43,6 +43,14 @@ export const setYScale = (
     .domain([yMin, yMax]);
 };
 
+const tickValuesUpTo = (max: number) => {
+  let values: number[] = [];
+  for (let i = 1; i <= max; i++) {
+    values.push(i);
+  }
+  return values;
+};
+
 const drawXAxis = (
   g: any,
   x: any,
@@ -60,6 +68,9 @@ const drawXAxis = (
 
       d3
         .axisBottom(x)
+        .ticks(5)
+        // .tickValues(tickValuesUpTo(xMax))
+        // .tickFormat((t, i) => t.toFixed(0))
         // @ts-ignore
         .tickFormat((x) => (x >= 0 && x % 1 == 0 && x <= xMax ? x : null))
     )
@@ -73,7 +84,7 @@ const drawYAxis = (g: any, y: any, drawDimensions: drawDimensions) =>
       d3
         .axisLeft(y)
         .tickFormat((y) => (y >= 1 && y <= 10 ? y : null))
-        .ticks(null)
+        .ticks(8)
         .tickSize(-drawDimensions.drawWidth)
     )
     .call((g: any) => g.select(".domain").remove());

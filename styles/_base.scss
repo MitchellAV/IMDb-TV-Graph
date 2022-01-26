@@ -14,7 +14,7 @@ html {
 }
 html,
 body {
-  overflow-x: hidden;
+  // overflow-x: hidden;
   width: 100%;
 }
 
@@ -46,4 +46,5 @@ main {
   justify-content: flex-start;
   align-items: center;
   width: 100%;
+  min-height: 100vh;
 }

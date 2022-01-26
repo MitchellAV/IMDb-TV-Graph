@@ -1,0 +1,21 @@
+@import "variables";
+@import "modularscale";
+
+.btn {
+  &--sticky {
+    $btn-side: 5em;
+    align-self: flex-end;
+
+    position: sticky;
+    top: 80vh;
+    right: 5vw;
+    width: $btn-side;
+    height: $btn-side * 0.5;
+    border-radius: 3em;
+    background-color: $clr-emphasis;
+    color: $clr-text-dark;
+    border: 2px solid $clr-background-dark;
+    font-size: 1.2em;
+    z-index: 10;
+  }
+}
