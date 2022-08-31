@@ -45,6 +45,7 @@ const Show = ({ show_info }: ShowProps) => {
 
     const options = { timeout: 1000 * 60 };
     const res = await axios.get(URI, options);
+
     const data = res.data.seasons as ImdbSeasonType[];
 
     return data;
@@ -56,6 +57,8 @@ const Show = ({ show_info }: ShowProps) => {
 
   const fetchAndUpdateSeasonInfo = async (imdb_id: string) => {
     const season_info = await fetchSeasons(id);
+    console.log(season_info);
+
     setSeasons(season_info);
     const episodes_info = format_episodes_d3_scatter(season_info);
     setEpisodesInfo(episodes_info);
@@ -73,6 +76,9 @@ const Show = ({ show_info }: ShowProps) => {
   const [currSeason, setCurrSeason] = useState(0);
 
   const plotRef = useRef<HTMLDivElement>(null);
+
+  console.log(season_statistics);
+
   return (
     <main className="main">
       <Head>
