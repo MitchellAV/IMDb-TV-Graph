@@ -309,6 +309,7 @@ export interface BoxOffice {
 }
 
 export interface Similar {
+  exists: string;
   id: string;
   title: string;
   fullTitle: string;

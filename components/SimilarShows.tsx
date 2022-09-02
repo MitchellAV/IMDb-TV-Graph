@@ -32,7 +32,7 @@ const SimilarShows = ({ similarShows }: PropType) => {
         promises.push(get_tmdb_id(imdb_id));
       }
       const show_exists = await Promise.all(promises);
-
+      similarShows.forEach((show, i) => (show.exists = show_exists[i]));
       setExists(show_exists.filter((a) => a != ""));
     };
     fetch_is_show(similarShows);
@@ -41,46 +41,49 @@ const SimilarShows = ({ similarShows }: PropType) => {
     <>
       <h3 className="main__header">Similar Shows</h3>
       <div className="similar">
-        {similarShows.map((show, index) => {
-          const {
-            directors,
-            fullTitle,
-            genres,
-            id,
-            imDbRating,
-            image,
-            plot,
-            stars,
-            title,
-            year,
-          } = show;
+        {similarShows
+          .filter((show) => show.exists != "")
+          .map((show, index) => {
+            const {
+              directors,
+              fullTitle,
+              genres,
+              id,
+              imDbRating,
+              image,
+              plot,
+              stars,
+              title,
+              year,
+              exists,
+            } = show;
 
-          return (
-            <div className="similar__show" key={index}>
-              <div className="similar__img">
-                <Image
-                  src={image as any}
-                  alt={title}
-                  layout="fill"
-                  objectFit="contain"
-                />
-              </div>
+            return (
+              <div className="similar__show" key={index}>
+                <div className="similar__img">
+                  <Image
+                    src={image as any}
+                    alt={title}
+                    layout="fill"
+                    objectFit="contain"
+                  />
+                </div>
 
-              <div className="similar__details">
-                <h3 className="similar__title">
-                  {title.replace("&amp;", "&")}
-                </h3>
-                <p className="similar__years"> {year}</p>
-                <p className="similar__rating">Rating: {imDbRating}</p>
-                <p className="similar__genres">{genres}</p>
-                <p className="similar__plot">{plot}</p>
+                <div className="similar__details">
+                  <h3 className="similar__title">
+                    {title.replace("&amp;", "&")}
+                  </h3>
+                  <p className="similar__years"> {year}</p>
+                  <p className="similar__rating">Rating: {imDbRating}</p>
+                  <p className="similar__genres">{genres}</p>
+                  <p className="similar__plot">{plot}</p>
+                </div>
+                <a className="link link--similar" href={`/show/${exists}`}>
+                  View Show
+                </a>
               </div>
-              <a className="link link--similar" href={`/show/${exists[index]}`}>
-                View Show
-              </a>
-            </div>
-          );
-        })}
+            );
+          })}
       </div>
     </>
   );
