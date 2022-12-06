@@ -2,6 +2,7 @@
   "name": "imdb-tv-graph",
   "version": "0.1.0",
   "private": true,
+  "proxy": "https://imdb-tv-api.herokuapp.com",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
